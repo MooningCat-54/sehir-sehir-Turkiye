@@ -1,0 +1,109 @@
+.profile-page {
+    max-width: 935px; /* Instagram'ın masaüstü genişlik standardı */
+    margin: 0 auto;
+    padding: 30px 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.profile-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 44px;
+}
+
+.profile-avatar-container {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    margin-right: 30px;
+}
+
+.profile-avatar {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid #dbdbdb;
+}
+
+.profile-info {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.profile-title-row {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.profile-username {
+    font-size: 1.5rem;
+    font-weight: 300;
+    color: #262626;
+}
+
+.edit-profile-btn {
+    background-color: #efefef;
+    color: #262626;
+    border: none;
+    border-radius: 8px;
+    padding: 7px 16px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.2s ease;
+}
+
+.edit-profile-btn:hover {
+    background-color: #dbdbdb;
+}
+
+.profile-stats {
+    display: flex;
+    gap: 40px;
+    font-size: 1.1rem;
+}
+
+.profile-stats span {
+    font-weight: 600;
+    color: #262626;
+}
+
+.profile-bio {
+    font-size: 1rem;
+    color: #262626;
+}
+
+.profile-fullname {
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+/* ALT KISIM: Fotoğraf Grid'i */
+.profile-divider {
+    border-top: 1px solid #dbdbdb;
+    margin-bottom: 20px;
+}
+
+.profile-gallery {
+    display: grid;
+    /* Instagram gibi yan yana tam 3 kare fotoğraf dizmek için: */
+    grid-template-columns: repeat(3, 1fr); 
+    gap: 28px; /* Fotoğraflar arası boşluk */
+}
+
+.gallery-item {
+    width: 100%;
+    /* aspect-ratio: 1 / 1 kodu resmin kusursuz bir kare olmasını sağlar! */
+    aspect-ratio: 1 / 1; 
+    object-fit: cover;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+}
+
+.gallery-item:hover {
+    opacity: 0.8;
+}

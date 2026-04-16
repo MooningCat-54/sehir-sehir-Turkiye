@@ -1,0 +1,48 @@
+.home-main-inclusive {
+    max-width: 1200px;
+    margin: 0 auto;   
+    background-color: #f8f9fa; 
+    min-height: 100vh;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.home-dividing-line {
+    margin-bottom: 20px;
+}
+
+.home-tabs {
+    display: flex;  
+    background: white;
+    border-radius: 12px;
+    margin: 0 20px 20px 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+}
+
+.home-content-button {
+    flex: 1;
+    padding: 16px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.home-grid-area {
+    padding: 0 20px 40px 20px;
+}
+
+.home-on-site-content-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 25px;
+}
+
+.home-sharing-content-grid {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}

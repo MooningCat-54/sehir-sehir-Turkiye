@@ -1,0 +1,30 @@
+.searchbar-wrapper {
+    position: relative;
+    width: 300px;
+    margin: 20px;
+}
+
+.searchbar-input-element {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+.searchbar-suggestion-list {
+    position: absolute;
+    top: 40px;
+    left: 0;
+    right: 0;
+    background-color: white;
+    border: 1px solid #ddd;
+    list-style: none;
+    padding: 0;
+    z-index: 100;
+}
+
+.searchbar-suggestion-element {
+    padding: 10px;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+}

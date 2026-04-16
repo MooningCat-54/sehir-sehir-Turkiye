@@ -1,0 +1,33 @@
+nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 20px;
+    background-color: #fff;
+    border-bottom: 1px solid #ddd;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.logo-area {
+    font-weight: bold;
+    font-size: 1.5rem;
+    color: #1877f2;
+    cursor: pointer;
+}
+
+.center-area {
+    display: flex;
+    flex: 1;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin: 0 20px;
+}
+
+.rigth-area {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}

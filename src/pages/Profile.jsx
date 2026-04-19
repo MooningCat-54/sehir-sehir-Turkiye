@@ -1,18 +1,27 @@
 import React from 'react';
 import './css/Profile.css';
 import GalleryArea from '../components/GalleryArea';
+import { useAuth } from '../context/AuthContext';
 
 const Profile = () => {
 
-    //kullanıcı mock data
+    const { user } = useAuth();
+
+    // 3. Sayfa yenilenme süresi
+    if (!user) {
+        return <div style={{ textAlign: 'center', marginTop: '50px' }}>Yükleniyor...</div>;
+    }
+
     const userProfile = {
-        username: "takmaad",
-        fullName: "gerçekad",
-        avatar: "zzz",
-        bio: "açıklama blbladcdcusdcuhsvludcvblablaajvıhvzucsuvcushk",
+        username: user.username, // db den gelen data
+        fullName: user.name,    
+        
+        avatar: `https://ui-avatars.com/api/?name=${user.name}&background=random&color=fff&size=128`, 
+        
+        // mock data
+        bio: "Biyografini ekle",
         stats: { posts: 12, saved: 150 }
     };
-
     // gallery componenty için
     const userPosts = [
         { id: 1, image: "https://picsum.photos/id/1021/800/800" },

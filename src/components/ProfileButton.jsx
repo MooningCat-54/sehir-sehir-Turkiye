@@ -1,17 +1,26 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import './css/ProfileButton.css'
 
 const ProfileButton = ({ userImage }) => {
     const [isOpen, setIsOpen] = useState(false);
 
-    const defaultImage = "";
+    const defaultImage = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
 
     const navigate = useNavigate();
+
+    const {user, logout} = useAuth();
 
     const toggleMenu = () => {
         setIsOpen(!isOpen);
     };
+
+    const handleLogOut = () => {
+        logout();
+        setIsOpen(false);
+        navigate('/auth/login');
+    }
 
     return (
         <div className="profile-button-container">
@@ -33,7 +42,14 @@ const ProfileButton = ({ userImage }) => {
                 <div className="dropdown-container">
                     
                     <button className="dropdown-button-style green-button" onClick={() => {
-                        navigate('/kullanici-adi/profile');
+                        if(user && user.username) {
+                            const safeName = user.username.toLowerCase().replace(/\s+/g, '-');
+                            navigate(`/${safeName}/profile`);
+                        }
+                        else {
+                            console.log(user);
+                            navigate('/kullanici/profile');
+                        }
                         console.log("Profile tıklandı");
                         setIsOpen(false);
                         }}>
@@ -45,7 +61,10 @@ const ProfileButton = ({ userImage }) => {
                     
                     <hr className="line"/>
                     
-                    <button className="dropdown-button-style red-button" onClick={() => { console.log("Çıkış yap"); setIsOpen(false); }}>
+                    <button className="dropdown-button-style red-button" onClick={() => { 
+                        handleLogOut();
+                        setIsOpen(false); 
+                        }}>
                         🚪 Çıkış Yap
                     </button>
                 </div>

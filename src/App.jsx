@@ -1,40 +1,50 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'; //router yönlendirme yapmak için
-import NavBar from './components/NavBar'; //navbar componenti
-import Home from './pages/Home'; //sitenin anasayfası
-import Auth from './pages/Auth'; //sitenin doğrulama/giriş sayfası
-import Profile from './pages/Profile'; //profil sayfası
-import LoginForm from './components/LoginForm'; //profil sayfası için component
-import RegisterForm from './components/RegisterForm'; //profil sayfası için component
+import { Routes, Route, Navigate } from 'react-router-dom'; 
+import NavBar from './components/NavBar'; 
+import Home from './pages/Home'; 
+import Auth from './pages/Auth'; 
+import Profile from './pages/Profile'; 
+import LoginForm from './components/LoginForm'; 
+import RegisterForm from './components/RegisterForm'; 
 
-//birbirinden izole yollar ve isimleri
+import { AuthProvider } from './context/AuthContext'; 
+import ProtectedRoute from './components/ProtectedRoute';
+import PublicRoute from './components/PublicRoute';
 
 function App() {
   return (
-    <Router>
-      <div style={{ backgroundColor: '#f0f2f5', minHeight: '100vh' }}>
-        <NavBar />
-        
-        <Routes>
+    // 2. TÜM UYGULAMAYI (AuthProvider) KAPSAMA ALANINA ALIYORUZ
+    // Bu sayede navbar profile ve diğer tüm sayfalar giriş yapılıp yapılmadığını bilecek.
+    <AuthProvider>
+        <div style={{ backgroundColor: '#f0f2f5', minHeight: '100vh' }}>
+          <NavBar />
+            
+          <Routes>
+            <Route index element={<Navigate to="/home" replace />} />
+            <Route path="/home" element={<Home />} />
 
-          <Route index element={<Navigate to="home" replace />} />
-          <Route path="/home" element={<Home />} />
+            <Route path="/auth" element={
+              <PublicRoute>
+                <Auth />
+              </PublicRoute> }>
+              <Route index element={<Navigate to='login' replace />} />
+              <Route path="login" element={<LoginForm />} />
+              <Route path="register" element={<RegisterForm />} />
+            </Route>
 
-          <Route path="/auth" element={<Auth />}>
-            <Route index element={<Navigate to='login' replace />} />
-            <Route path="login" index element={<LoginForm />} />
-            <Route path="register" element={<RegisterForm />} />
-          </Route>
+            <Route path="/:username">
+              <Route index element={<Home />} />
+              
+              <Route path="profile" element={
+                <ProtectedRoute>
+                  <Profile />
+                </ProtectedRoute>
+              } />
+            </Route>
 
-          <Route path="/kullanici-adi">
-            <Route index element={<Home />} />
-            <Route path="Profile" element={<Profile />} />
-          </Route>
-
-
-        </Routes>
-      </div>
-    </Router>
+          </Routes>
+        </div>
+    </AuthProvider>
   );
 }
 

@@ -3,6 +3,7 @@ import {useNavigate} from 'react-router-dom'
 import CategoryBar from '../components/CategoryBar';
 import ContentCard from '../components/ContentCard';
 import UserSharingCard from '../components/UserSharingCard';
+import AuthButton from '../components/AuthButton';
 import './css/Home.css';
 
 const Home = () => {
@@ -22,25 +23,6 @@ const Home = () => {
 
     return (
         <div className="home-main-inclusive">
-            
-            <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '15px 20px' }}>
-                <button 
-                    onClick={() => navigate('/auth/login')} // Tıklanınca /auth adresine git
-                    style={{
-                        padding: '10px 20px', 
-                        backgroundColor: '#1877f2', 
-                        color: 'white', 
-                        border: 'none', 
-                        borderRadius: '8px', 
-                        cursor: 'pointer',
-                        fontWeight: 'bold',
-                        boxShadow: '0 2px 5px rgba(0,0,0,0.2)'
-                    }}
-                >
-                    🚪 Giriş / Kayıt Sayfasına Git
-                </button>
-            </div>
-
 
             <div className="home-dividing-line">
                 <CategoryBar />

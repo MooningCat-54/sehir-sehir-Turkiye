@@ -1,15 +1,23 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import SearchBar from './SearchBar';
 import ProfileButton from './ProfileButton';
 import RandomSuggestionButton from './RandomSuggestion';
+import { useAuth } from '../context/AuthContext';
 import './css/NavBar.css'
+import AuthButton from './AuthButton';
 
 
 
 const NavBar = ({allLocations}) => {
 
     const navigate = useNavigate();
+    const location = useLocation();
+    const {user, isloading} = useAuth();
+
+    if(location.pathname.startsWith('/auth')) {
+        return(null);
+    }
 
     //mock dta
     const locationDeneme = [
@@ -39,7 +47,14 @@ const NavBar = ({allLocations}) => {
             </div>
 
             <div className="rigth-area">  
-                <ProfileButton/>
+                {isloading ? (
+                        <span>yükleniyor</span>
+                    ) : user ? (
+                        <ProfileButton />
+                    ) : (
+                        <AuthButton />
+                    )
+                }
             </div>
         </nav>
     );

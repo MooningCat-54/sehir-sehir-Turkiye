@@ -1,15 +1,19 @@
 import React from 'react';
-import { Outlet, Link, useLocation } from 'react-router-dom'; // Link ve useLocation ekledik
+import { Outlet, Link, useLocation, Navigate, useNavigate } from 'react-router-dom'; // Link ve useLocation ekledik
 import './css/Auth.css';
 
 const Auth = () => {
     const location = useLocation();
     const currentPath = location.pathname.toLowerCase(); //pathi lowercase yapıyor
     const isLoginPage = currentPath === '/auth/login'; //burda karşılaştırma yapıyor path doğru ise true yanlış ise false döndürüyor
+    const navigate = useNavigate();
 
     return (
         <div className="auth-page-container">
             <div className="auth-card">
+                <button onClick={() => navigate('/home')} style={{border: 'none', background: 'none', cursor: 'pointer'}}>
+                    ❌
+                </button>
                 <div className="auth-header">
                     <h2>{isLoginPage ? "Şehir Şehir Türkiyeye Giriş Yap" : "Yeni Hesap Oluştur"}</h2>
                     <p>{isLoginPage ? "Türkiyeyi keşfetmeye devam et." : "Türkiyenin güzzeliklerini paylaş."}</p>

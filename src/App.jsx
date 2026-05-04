@@ -5,7 +5,8 @@ import Home from './pages/Home';
 import Auth from './pages/Auth'; 
 import Profile from './pages/Profile'; 
 import LoginForm from './components/LoginForm'; 
-import RegisterForm from './components/RegisterForm'; 
+import RegisterForm from './components/RegisterForm';
+import EditProfile from './pages/EditProfile';
 
 import { AuthProvider } from './context/AuthContext'; 
 import ProtectedRoute from './components/ProtectedRoute';
@@ -40,6 +41,13 @@ function App() {
                   <Profile />
                 </ProtectedRoute>
               } />
+
+              <Route path="profile/edit" element={
+                <ProtectedRoute>
+                  <EditProfile />
+                </ProtectedRoute>
+              } />
+
             </Route>
 
           </Routes>

@@ -1,5 +1,5 @@
 .home-main-inclusive {
-    max-width: 1200px;
+    max-width: 1350px; 
     margin: 0 auto;   
     background-color: #f8f9fa; 
     min-height: 100vh;
@@ -30,19 +30,75 @@
 }
 
 .home-grid-area {
-    padding: 0 20px 40px 20px;
+    padding: 0px 20px 40px 20px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
+/* --- DİĞER KODLARIN AYNI KALIYOR --- */
 .home-on-site-content-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 25px;
 }
 
-.home-sharing-content-grid {
+/* YENİ: GEZGİN PAYLAŞIMLARI (65 / 35 MİMARİSİ - SADECE DESKTOP) */
+.home-sharing-content-layout {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start; /* Sağ panelin ekrana yapışabilmesi için bu şart */
+}
+
+/* SOL SÜTUN (%65): Postların Aktığı Yer */
+.feed-column {
+    flex: 80%;
     display: flex;
     flex-direction: column;
-    align-items: center;
     gap: 20px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* SAĞ SÜTUN (%35): Sabit (Sticky) Paylaşım Paneli */
+.sidebar-column {
+    flex: 35%;
+    position: sticky; /* Sihirli kelime: Ekranda asılı kalır! */
+    top: 100px; /* Sayfa kaydıkça tepeden 20px boşluk bırakır */
+}
+
+/* Sağ panelin içindeki kutunun makyajı */
+.create-post-panel {
+    background-color: #fff;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    border: 1px solid #eaeaea;
+}
+
+.create-post-panel h3 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.create-post-panel p {
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 20px;
+    line-height: 1.5;
+}
+
+.create-post-btn {
+    width: 100%;
+    padding: 12px;
+    background-color: #1877f2;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.create-post-btn:hover {
+    background-color: #166fe5;
 }

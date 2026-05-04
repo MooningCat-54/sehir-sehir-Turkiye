@@ -14,14 +14,41 @@ export const AuthProvider = ({children}) => {
 
     
     useEffect(() => {
-        const token = localStorage.getItem('token');
-        const storedName = localStorage.getItem('name');
+        const checkAuthStatus = async () => {
+            const token = localStorage.getItem('token');
+            const storedName = localStorage.getItem('name');
+            const storedUserName = localStorage.getItem('username');
 
-        if(token && storedName) {
-            setUser({name: storedName});
-        }
+            if(token && storedName) {
+                try {
+                    const response = await fetch('http://localhost:5000/api/auth/verify', {
+                        method: 'GET',
+                        headers: {'Authorization': `Bearer ${token}`}
+                    });
+                    if(response.ok) {
+                        setUser({
+                            name: storedName,
+                            username: storedUserName,
+                            token: token
+                        });
+                    }
+                    else {
+                        localStorage.removeItem('token');
+                        localStorage.removeItem('name');
+                        localStorage.removeItem('username');
+                        setUser(null);
+                    }
+                }
+                catch(error) {
+                    setUser(null);
+                }
+            }
 
-        setIsLoading(false);
+            setIsLoading(false);
+        };
+
+        checkAuthStatus();
+
     }, []);
 
 
@@ -60,47 +87,48 @@ export const AuthProvider = ({children}) => {
 
     }
 
+    // src/context/AuthContext.jsx içindeki login fonksiyonu
     const login = async (email, password) => {
-        console.log('adım 1 login fonksiyonu çalıştı data:', email, password);
         try {
-            console.log('adım 2 backende veriler gönderiliyor')
             const response = await fetch('http://localhost:5000/api/auth/login', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({email, password})
             });
 
-            console.log('adım 3 backendin cevabı bekleniyor')
             const data = await response.json();
 
-            console.log(data);
-
             if (response.ok) {
-                console.log('giriş başarılı data', data);
-
+                // 1. Backend'den gelen tüm önemli verileri localStorage'a yazıyoruz[cite: 16]
                 localStorage.setItem('token', data.token);
                 localStorage.setItem('name', data.name);
-
-                setUser({name: data.name, username: data.username, email: data.email});
+                localStorage.setItem('username', data.username);
+                
+                // 2. State içine sadece isim değil, avatar bilgisini de ekliyoruz
+                // Bu sayede giriş yapınca NavBar'daki resim anında güncellenir.
+                setUser({
+                    name: data.name, 
+                    username: data.username, 
+                    email: data.email,
+                    avatarUrl: data.avatarUrl // Backend login cevabına bunu ekledik[cite: 2]
+                });
 
                 return true;
-            }
-            else {
-                console.log(data);
-                alert(data.error || data.message);
+            } else {
+                alert(data.message || "Giriş başarısız.");
                 return false;
             }
-        }
-        catch(error) {
-            console.error("giriş hatası:", error);
-            alert("sunucuya ulaşılamıyor");
+        } catch(error) {
+            console.error("Giriş hatası:", error);
+            alert("Sunucuya ulaşılamıyor.");
             return false;
         }
     };
-
+    
     const logout = () => {
         localStorage.removeItem('token');
         localStorage.removeItem('name');
+        localStorage.removeItem('username');
 
         setUser(null);
     }

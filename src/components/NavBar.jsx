@@ -9,31 +9,17 @@ import AuthButton from './AuthButton';
 
 
 
-const NavBar = ({allLocations}) => {
+const NavBar = ({allLocations = []}) => {
 
     const navigate = useNavigate();
     const location = useLocation();
-    const {user, isloading} = useAuth();
+    const {user, isLoading} = useAuth();
 
     if(location.pathname.startsWith('/auth')) {
         return(null);
     }
 
-    //mock dta
-    const locationDeneme = [
-        { 
-            location: "Ankara", 
-            user: { name: "kullanıcı1" } 
-        },
-        { 
-            location: "İstanbul", 
-            user: { name: "kullanıcı2" } 
-        },
-        { 
-            location: "Eskişehir", 
-            user: { name: "kullanıcı3" } 
-        }
-    ];
+   
 
     return (
         <nav>
@@ -42,18 +28,19 @@ const NavBar = ({allLocations}) => {
             </div>
 
             <div className="center-area">
-                <SearchBar/>
-                <RandomSuggestionButton locations={locationDeneme}/>
+                <SearchBar />
+                {/* 3. Rastgele öneri artık veritabanındaki gerçek yerleri kullanıyor */}
+                <RandomSuggestionButton locations={allLocations} />
             </div>
 
             <div className="rigth-area">  
-                {isloading ? (
-                        <span>yükleniyor</span>
-                    ) : user ? (
-                        <ProfileButton />
-                    ) : (
-                        <AuthButton />
-                    )
+                {isLoading ? (
+                    <span>Yükleniyor...</span>
+                ) : user ? (
+                    <ProfileButton />
+                ) : (
+                    <AuthButton />
+                )
                 }
             </div>
         </nav>

@@ -8,52 +8,64 @@ import './css/UserSharingCard.css';
 
 const UserSharingCard = ({ sharingCard }) => {
 
+    const baseUrl = "http://localhost:5000";
 
-    const data = sharingCard;
+    const { 
+        ImageUrl, 
+        Caption, 
+        City, 
+        Username, 
+        AvatarUrl, 
+        CreatedAt 
+    } = sharingCard;
+
+    const displayAvatar = AvatarUrl ? `${baseUrl}${AvatarUrl}` : `https://ui-avatars.com/api/?name=${Username}&background=random&color=fff`;
 
     return (
         <div className="usersharingcard-card-container">
-            {data.image && (
+            {ImageUrl && (
                 <div className="usersharingcard-image-container">
                     <img 
                         className="usersharingcard-image-element"
-                        src={data.image} 
+                        src={`${baseUrl}${ImageUrl}`} // Tam URL oluşturuyoruz[cite: 14]
                         alt="Gezi Görseli"
                     />
                 </div>
             )}
 
             <div className="usersharingcard-content-container">
-                
                 <div className="usersharingcard-profile-container">
                     <div className="usersharingcard-avatar-container">
                         <img 
                             className="usersharingcard-avatar-element"
-                            src={data.user.avatar} 
-                            alt={data.user.name} 
+                            src={displayAvatar} 
+                            alt={Username} 
                         />
                         <span className="usersharingcard-name-container">
-                            {data.user.name}
+                            {Username} {/* SQL'den gelen Username[cite: 2] */}
                         </span>
                     </div>
                     
                     <span className="usersharingcard-date-container">
-                        📍 {data.location}
+                        📍 {City} {/* SQL'den gelen City[cite: 4] */}
                     </span>
                 </div>
 
                 <p className="usersharingcard-text-content-container">
-                    {data.content}
+                    {Caption} {/* SQL'den gelen Caption[cite: 2] */}
                 </p>
 
                 <div className="usersharingcard-engagement-buttons-container">
-                    <LikeButton initialLikes={data.likes} />
-                    <DisLikeButton initialDisLikes={data.disLikes}/>
+                    {/* Beğeni sayılarını da SQL'e eklediğinde buraya bağlayabiliriz */}
+                    <LikeButton initialLikes={0} /> 
+                    <DisLikeButton initialDisLikes={0}/>
                     <ShareButton />
                     <SaveButton />
                 </div>
+                
                 <div className="usersharingcard-comment-container">
-                    <CommentArea />
+                    {/* CommentArea'ya hangi posta yorum yapıldığını bildirmek için Id gönderiyoruz */}
+                    <CommentArea postId={sharingCard.Id} /> 
                 </div>
             </div>
         </div>

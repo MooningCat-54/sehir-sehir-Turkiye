@@ -22,7 +22,7 @@ const RandomSuggestionButton = ({ locations }) => {
             onMouseOver={(e) => e.target.style.backgroundColor = '#1917f1'}
             onMouseOut={(e) => e.target.style.backgroundColor = '#166fe5'}
         >
-            🎰
+            rastgele rote öner
         </button>
     );
 };

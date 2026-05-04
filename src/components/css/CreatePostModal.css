@@ -1,0 +1,102 @@
+/* Arka Planı Karartan Katman */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.6); /* Siyah rengin %60 saydam hali */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Navbar'ın bile üstüne çıkması için çok yüksek bir değer */
+    backdrop-filter: blur(3px); /* Arka planı hafifçe bulanıklaştırır (Çok şık durur) */
+}
+
+/* Modal'ın Kendisi (Beyaz Kutu) */
+.modal-content {
+    background-color: #fff;
+    width: 90%;
+    max-width: 500px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    animation: modalFadeIn 0.3s ease; /* Açılırken yumuşak geliş animasyonu */
+}
+
+@keyframes modalFadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Başlık Kısmı */
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 25px;
+    border-bottom: 1px solid #eaeaea;
+}
+
+.modal-header h2 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: #333;
+}
+
+.close-button {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #888;
+}
+
+.close-button:hover { color: #333; }
+
+/* Form Gövdesi */
+.modal-body { padding: 25px; }
+
+.form-group { margin-bottom: 20px; }
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #444;
+}
+
+.form-group input[type="text"],
+.form-group textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-sizing: border-box;
+    font-family: inherit;
+    resize: vertical;
+}
+
+.file-input { font-size: 0.9rem; color: #666; }
+
+/* Alt Butonlar */
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    margin-top: 30px;
+}
+
+.cancel-btn, .share-btn {
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+}
+
+.cancel-btn { background-color: #f1f2f6; color: #555; }
+.cancel-btn:hover { background-color: #e2e4e9; }
+
+.share-btn { background-color: #1877f2; color: white; }
+.share-btn:hover { background-color: #166fe5; }

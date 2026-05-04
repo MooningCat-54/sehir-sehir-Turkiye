@@ -14,25 +14,31 @@ const RegisterForm = () => {
     const navigate = useNavigate();
     const {register} = useAuth();
 
+    // src/components/RegisterForm.jsx içindeki handleRegister fonksiyonu
     const handleRegister = async (e) => {
         e.preventDefault();
         setError('');
 
+        // 1. Backend'deki 'register' fonksiyonu 4 parametre bekliyor: name, username, email, password[cite: 2, 16]
+        // Senin formundaki 'userName' (N büyük) ile AuthContext'teki 'username' (n küçük) eşleşmeli.
         if(!name || !password || !email || !userName) {
-            setError('boş bırakılan alan');
+            setError('Lütfen tüm alanları doldurunuz.');
             return;
         }
 
         setUploading(true);
 
+        // 2. AuthContext.js içindeki register fonksiyonuna verileri gönderiyoruz[cite: 16, 32]
+        // Dikkat: Parametre sırası backend ile aynı olmalı: (FullName, Username, Email, Password)
         const isRegisterSucceed = await register(name, userName, email, password);
 
         if(isRegisterSucceed) {
-            alert('kayıt başarılı');
-            navigate('/auth/login');
+            alert('Kayıt başarılı! Şimdi giriş yapabilirsiniz.');
+            navigate('/auth/login'); //[cite: 11, 32]
         }
         else {
-            setError('başarısız deneme');
+            // Backend'den gelen spesifik hata mesajlarını (örneğin: "Email kullanımda") gösterir
+            setError('Kayıt sırasında bir sorun oluştu. Lütfen bilgileri kontrol edin.');
         }
         setUploading(false);
     };

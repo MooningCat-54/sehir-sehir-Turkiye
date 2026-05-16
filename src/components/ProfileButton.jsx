@@ -68,7 +68,7 @@ const ProfileButton = () => {
             {isOpen && (
                 <div className="dropdown-container">
                     <button className="dropdown-button-style green-button" onClick={() => {
-                        navigate(`/${user?.username}/profile`); // Dinamik path[cite: 9]
+                        navigate(`/${user?.username}/profile`);
                         setIsOpen(false);
                     }}>
                         👤 Profilim
@@ -76,6 +76,13 @@ const ProfileButton = () => {
                     
                     <button className='dropdown-button-style green-button' onClick={() => setIsOpen(false)}>
                         ⚙️ Ayarlar
+                    </button>
+
+                    <button className='dropdown-button-style green-button' onClick={() => {
+                        navigate(`/${user?.username}/saved`);
+                        setIsOpen(false);
+                    }}>
+                        🔖 kaydedilenler
                     </button>
                     
                     <hr className="line"/>

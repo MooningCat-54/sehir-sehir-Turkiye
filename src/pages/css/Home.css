@@ -35,14 +35,12 @@
     box-sizing: border-box;
 }
 
-/* --- DİĞER KODLARIN AYNI KALIYOR --- */
 .home-on-site-content-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 25px;
 }
 
-/* YENİ: GEZGİN PAYLAŞIMLARI (65 / 35 MİMARİSİ - SADECE DESKTOP) */
 .home-sharing-content-layout {
     display: flex;
     gap: 20px;

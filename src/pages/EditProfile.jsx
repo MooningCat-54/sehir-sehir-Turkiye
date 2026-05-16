@@ -1,114 +1,165 @@
-// pages/EditProfile.jsx
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import styles from './css/EditProfile.module.css';
 
 const EditProfile = () => {
     const { user } = useAuth();
     const navigate = useNavigate();
-    const fileInputRef = useRef(null); // Gizli dosya seçiciye erişmek için
+    const fileInputRef = useRef(null);
+    const baseUrl = "http://localhost:5000";
+    const defaultImage = `${baseUrl}/uploads/avatars/default_avatar.png`;
 
-    const [bio, setBio] = useState(user?.bio || '');
-    const [preview, setPreview] = useState(user?.avatarUrl || 'https://via.placeholder.com/150');
+    const [bio, setBio] = useState('');
+    const [preview, setPreview] = useState(null);
     const [selectedFile, setSelectedFile] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [isImageRemoved, setIsImageRemoved] = useState(false);
 
-    // Fotoğrafa tıklandığında gizli <input type="file" />'ı tetikler
-    const handleImageClick = () => {
-        fileInputRef.current.click();
-    };
+    // 1. ADIM: Sayfa açıldığında veritabanından güncel profil bilgilerini çekiyoruz
+    useEffect(() => {
+        const fetchFullProfile = async () => {
+            try {
+                // AuthContext'teki kısıtlı 'user' nesnesi yerine veritabanına soruyoruz
+                const response = await fetch(`${baseUrl}/api/auth/profile/${user.username}`);
+                const data = await response.json();
+
+                if (data.success) {
+                    const p = data.profile;
+                    setBio(p.Bio || ''); // SQL kolon ismine dikkat (Bio)
+                    
+                    // Eğer veritabanında özel bir avatar yolu varsa onu set et
+                    if (p.AvatarUrl && !p.AvatarUrl.includes('default_avatar.png')) {
+                        setPreview(`${baseUrl}${p.AvatarUrl}`);
+                    } else {
+                        setPreview(defaultImage);
+                    }
+                }
+            } catch (err) {
+                console.error("Profil bilgileri yüklenemedi:", err);
+                setPreview(defaultImage);
+            }
+        };
+
+        if (user?.username) {
+            fetchFullProfile();
+        }
+    }, [user, baseUrl, defaultImage]);
 
     const handleFileChange = (e) => {
         const file = e.target.files[0];
         if (file) {
             setSelectedFile(file);
-            //use state ile dosya konumunu 
             setPreview(URL.createObjectURL(file));
+            setIsImageRemoved(false); // Yeni resim seçildi, silme modunu kapat
         }
     };
 
-    // src/pages/EditProfile.jsx içindeki handleSave fonksiyonu
+    const handleRemoveImage = () => {
+        setSelectedFile(null);
+        setIsImageRemoved(true);
+        setPreview(defaultImage);
+        if (fileInputRef.current) fileInputRef.current.value = "";
+    };
+
     const handleSave = async (e) => {
         e.preventDefault();
         setLoading(true);
 
-        // 1. Resim dosyası içerdiği için FormData kullanmak zorundayız[cite: 12]
         const formData = new FormData();
+        formData.append('username', user.username);
         formData.append('bio', bio);
-        formData.append('username', user.username); // Backend'de WHERE Username = @username için[cite: 2]
         
         if (selectedFile) {
-            // 'avatar' ismi backend'deki upload.single('avatar') ile aynı olmalı![cite: 4]
-            formData.append('avatar', selectedFile); 
+            formData.append('avatar', selectedFile);
+            formData.append('isImageRemoved', 'false');
+        } else if (isImageRemoved) {
+            formData.append('isImageRemoved', 'true'); 
+        } else {
+            formData.append('isImageRemoved', 'false');
         }
 
         try {
-            const response = await fetch('http://localhost:5000/api/auth/update-profile', {
+            const token = localStorage.getItem('token');
+            const response = await fetch(`${baseUrl}/api/auth/update-profile`, {
                 method: 'PUT',
-                headers: { 
-                    // FormData kullanırken Content-Type manuel yazılmaz, tarayıcı halleder.
-                    // Ancak token'ı mutlaka ekliyoruz.[cite: 12, 16]
-                    'Authorization': `Bearer ${user.token}` 
-                },
+                headers: { 'Authorization': `Bearer ${token}` },
                 body: formData
             });
 
+            const data = await response.json();
+
             if (response.ok) {
-                const data = await response.json();
-                alert("Profil başarıyla güncellendi!");
-                
-                // 2. Telsizi (Event) ateşle! NavBar ve ProfileButton bunu dinleyip resmi yenileyecek
-                window.dispatchEvent(new Event('profileUpdateted')); 
-                
-                navigate(`/${user.username}/profile`); // Kendi profiline yönlendir[cite: 14]
+                alert("Profil güncellendi!");
+                // Navbar'ın güncellenmesi için custom event fırlatıyoruz
+                window.dispatchEvent(new Event('profileUpdateted'));
+                navigate(`/${user.username}/profile`);
+            } else {
+                alert("Hata: " + data.error);
             }
         } catch (err) {
-            alert("Bağlantı hatası: Sunucu kapalı olabilir.");
+            console.error("Save Error:", err);
+            alert("Bağlantı hatası.");
         } finally {
             setLoading(false);
         }
     };
 
     return (
-        <div style={{ textAlign: 'center', padding: '50px' }}>
+        <div className={styles.container}>
             <h2>Profili Düzenle</h2>
             
-            {/* Fotoğraf Önizleme Alanı */}
-            <div 
-                onClick={handleImageClick}
-                style={{ 
-                    width: '150px', height: '150px', borderRadius: '50%', 
-                    margin: '0 auto 20px', cursor: 'pointer', overflow: 'hidden',
-                    border: '3px solid #ddd', position: 'relative'
-                }}
-            >
-                <img src={preview} alt="Profil" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                <div style={{ 
-                    position: 'absolute', bottom: 0, background: 'rgba(0,0,0,0.5)', 
-                    width: '100%', color: 'white', fontSize: '12px', padding: '5px 0' 
-                }}>Değiştir</div>
-            </div>
-
-            {/* Gizli Dosya Girişi */}
-            <input 
-                type="file" 
-                ref={fileInputRef} 
-                onChange={handleFileChange} 
-                style={{ display: 'none' }} 
-                accept="image/*" 
-            />
-
             <form onSubmit={handleSave}>
+                <div className={styles.avatarSection} onClick={() => fileInputRef.current.click()}>
+                    <img 
+                        src={preview || defaultImage} 
+                        alt="Profil" 
+                        className={styles.avatarImage} 
+                        onError={(e) => {
+                            e.target.onerror = null; 
+                            e.target.src = defaultImage; 
+                        }} 
+                    />
+                    <div className={styles.avatarOverlay}>
+                        <span>Fotoğraf Değiştir</span>
+                    </div>
+                </div>
+
+                <input 
+                    type="file" 
+                    ref={fileInputRef} 
+                    onChange={handleFileChange} 
+                    style={{ display: 'none' }} 
+                    accept="image/*" 
+                />
+
                 <textarea 
-                    placeholder="Biyografinizi yazın..."
+                    className={styles.bioInput}
+                    placeholder="Kendinizden bahsedin..."
                     value={bio}
                     onChange={(e) => setBio(e.target.value)}
-                    style={{ width: '300px', height: '100px', padding: '10px', marginBottom: '20px' }}
-                /><br />
+                />
 
-                <button type="submit" disabled={loading} style={{ padding: '10px 30px' }}>
-                    {loading ? 'Yükleniyor...' : 'Değişiklikleri Kaydet'}
-                </button>
+                <div className={styles.buttonGroup}>
+                    <button 
+                        type="submit" 
+                        className={styles.saveButton}
+                        disabled={loading}
+                    >
+                        {loading ? 'Kaydediliyor...' : 'Değişiklikleri Kaydet'}
+                    </button>
+
+                    {/* ŞART: preview yüklendiyse ve default resmi içermiyorsa butonu göster */}
+                    {preview && !preview.includes('default_avatar.png') && (
+                        <button 
+                            type="button" 
+                            className={styles.removeButton} 
+                            onClick={handleRemoveImage}
+                        >
+                            Fotoğrafı Kaldır
+                        </button>
+                    )}
+                </div>
             </form>
         </div>
     );

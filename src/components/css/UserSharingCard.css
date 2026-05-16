@@ -1,4 +1,5 @@
 .usersharingcard-card-container {
+    position: relative;
     width: 100%;
     background-color: white;
     border-bottom: 1px solid #eee;
@@ -50,6 +51,7 @@
 }
 
 .usersharingcard-date-container {
+    margin-top: 30px;
     font-size: 0.9rem;
     color: #888;
     font-style: italic;
@@ -75,3 +77,4 @@
 .usersharingcard-comment-container {
     padding: 0 20px 10px 20px;
 }
+

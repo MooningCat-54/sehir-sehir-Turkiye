@@ -7,10 +7,11 @@ import Profile from './pages/Profile';
 import LoginForm from './components/LoginForm'; 
 import RegisterForm from './components/RegisterForm';
 import EditProfile from './pages/EditProfile';
-
+import AdminFAB from './components/AdminFAB';
 import { AuthProvider } from './context/AuthContext'; 
 import ProtectedRoute from './components/ProtectedRoute';
 import PublicRoute from './components/PublicRoute';
+import SavedPlacesPage from './pages/SavedPlacesPage';
 
 function App() {
   return (
@@ -42,6 +43,12 @@ function App() {
                 </ProtectedRoute>
               } />
 
+              <Route path="saved" element={
+                <ProtectedRoute>
+                  <SavedPlacesPage />
+                </ProtectedRoute>
+              } />
+
               <Route path="profile/edit" element={
                 <ProtectedRoute>
                   <EditProfile />
@@ -51,6 +58,9 @@ function App() {
             </Route>
 
           </Routes>
+
+          <AdminFAB />
+
         </div>
     </AuthProvider>
   );

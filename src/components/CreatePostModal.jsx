@@ -73,6 +73,10 @@ const CreatePostModal = ({ isOpen, onClose }) => {
                             <option value="Doğa">Doğa</option>
                             <option value="Tarih">Tarih</option>
                             <option value="Deniz">Deniz</option>
+                            <option value="Kamp">Kamp</option>
+                            <option value="Şehir">Şehir</option>
+                            <option value="Gastronomi">Gastronomi</option>
+                            <option value="Kış Turizmi">Kış Turizmi</option>
                             <option value="Gastronomi">Gastronomi</option>
                         </select>
                     </div>

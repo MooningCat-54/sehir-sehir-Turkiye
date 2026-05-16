@@ -1,0 +1,22 @@
+.admin-fab {
+    position: fixed !important;
+    bottom: 40px !important;
+    right: 40px !important;
+    width: 70px;
+    height: 70px;
+    background-color: #ff4757;
+    color: white;
+    border-radius: 50%;
+    z-index: 9999999; /* Sayıyı iyice artırdık */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: 5px solid white; /* Görünürlüğü artırmak için çerçeve */
+}
+
+
+.admin-fab:hover {
+    transform: scale(1.1);
+    background-color: #ff6b81;
+}

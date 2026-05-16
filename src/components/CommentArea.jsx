@@ -9,6 +9,11 @@ const CommentArea = ({ postId }) => {
     const [newComment, setNewComment] = useState('');
     const [loading, setLoading] = useState(false);
     const baseUrl = "http://localhost:5000";
+    const defaultAvatar = `${baseUrl}/uploads/avatars/default_avatar.png`;
+
+    const displayAvatar = user?.avatar 
+        ? `${baseUrl}${user.avatar}` 
+        : defaultAvatar;
 
     // 1. Veritabanından (MSSQL) yorumları çek[cite: 4, 13]
     useEffect(() => {
@@ -72,7 +77,7 @@ const CommentArea = ({ postId }) => {
                 <div className="comment-area-writing-container">
                     <img 
                         className="comment-area-avatar"
-                        src={user.avatarUrl ? `${baseUrl}${user.avatarUrl}` : "https://cdn-icons-png.flaticon.com/512/149/149071.png"}
+                        src={displayAvatar}
                         alt="Profil"
                     />
                     <div className="comment-area-input-container">
@@ -106,7 +111,7 @@ const CommentArea = ({ postId }) => {
                             key={c.Id} // SQL'den gelen büyük harf 'Id'
                             user={{ 
                                 name: c.Username, 
-                                avatar: c.AvatarUrl ? `${baseUrl}${c.AvatarUrl}` : "https://cdn-icons-png.flaticon.com/512/149/149071.png" 
+                                avatar: c.AvatarUrl 
                             }} 
                             text={c.CommentText} // SQL kolon ismi
                             date={new Date(c.CreatedAt).toLocaleDateString('tr-TR')} 

@@ -3,20 +3,23 @@ import { Navigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useState } from "react";
 
+// components/ProtectedRoute.jsx
 const ProtectedRoute = ({children}) => {
+    // 'isloading' değil 'isLoading' olmalı!
+    const { user, isLoading } = useAuth(); 
 
-    const {user, isloading} = useAuth();
-
-    if(isloading) {
+    if(isLoading) {
         return (
-            <div className='protected-router-isloading'>
-                <h2>lütfen bekleyiniz</h2>
+            <div className='protected-router-isloading' style={{textAlign:'center', padding:'50px'}}>
+                <h2>Lütfen bekleyiniz, oturum doğrulanıyor...</h2>
             </div>
         );
     }
+    
     if(!user) {
         return <Navigate to='/auth/login' replace />;
     }
+    
     return children;
 }
 

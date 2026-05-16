@@ -24,10 +24,13 @@ const Home = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                // Backend'deki yeni route'larımızı çağırıyoruz
+                // 1. Giriş yapan kullanıcının ID'sini alıyoruz (user objesi AuthContext'ten gelmeli)
+                const userId = user?.userId || 0; 
+
+                // 2. URL'in sonuna userId'yi parametre (query string) olarak ekliyoruz
                 const [officialRes, socialRes] = await Promise.all([
                     fetch('http://localhost:5000/api/posts/official'),
-                    fetch('http://localhost:5000/api/posts/all')
+                    fetch(`http://localhost:5000/api/posts/all?userId=${userId}`) // Burası kritik!
                 ]);
 
                 const officialData = await officialRes.json();
@@ -43,7 +46,7 @@ const Home = () => {
         };
 
         fetchData();
-    }, []);
+    }, [user]); // user değiştiğinde (giriş/çıkış) verileri tekrar çek ki oylar güncellensin
 
 
     const handleCategoryToggle = (categoryName) => {
@@ -116,7 +119,16 @@ const Home = () => {
             <div className="home-grid-area">
                 {activeTab === 'official' ? (
                     <div className="home-on-site-content-grid">
-                        {/* ... Official Rotalar döngüsü ... */}
+                        {filteredPlaces.length > 0 ? (
+                            filteredPlaces.map((yer) => (
+                            // 2. 'data' prop'u ile her bir yerin verisini karta gönder
+                            <ContentCard key={yer.Id} data={yer} />
+                            ))
+                        ) : (
+                            <div style={{textAlign: 'center', gridColumn: '1/-1', padding: '20px'}}>
+                                Aradığınız kriterlere uygun resmi rota bulunamadı.
+                            </div>
+                        )}
                     </div>
                 ) : (
                     <div className="home-sharing-content-layout">

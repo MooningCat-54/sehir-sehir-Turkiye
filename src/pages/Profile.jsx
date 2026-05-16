@@ -1,44 +1,37 @@
-// src/pages/Profile.jsx
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import GalleryArea from '../components/GalleryArea';
+import UserSharingCard from '../components/UserSharingCard'; // Yeni ekledik
 import { useAuth } from '../context/AuthContext';
 import './css/Profile.css';
 
 const Profile = () => {
-    const { username } = useParams(); // URL'den hangi profile bakıldığını al
-    const { user } = useAuth(); // Giriş yapan kullanıcı bilgisi[cite: 16]
+    const { username } = useParams();
+    const { user } = useAuth();
     const navigate = useNavigate();
     const baseUrl = "http://localhost:5000";
+    const defaultAvatar = `${baseUrl}/uploads/avatars/default_avatar.png`;
 
     const [profileData, setProfileData] = useState(null);
-    const [userPosts, setUserPosts] = useState([]); // Mock resimler yerine boş state[cite: 14]
+    const [userPosts, setUserPosts] = useState([]); 
     const [loading, setLoading] = useState(true);
+    // 1. Sekme yönetimi için state
+    const [activeTab, setActiveTab] = useState('posts'); 
 
     useEffect(() => {
         const fetchProfileAndPosts = async () => {
             setLoading(true);
             try {
-                // 1. Profil Bilgilerini Çek (Bio, FullName, Avatar)[cite: 2, 14]
                 const profileRes = await fetch(`${baseUrl}/api/auth/profile/${username}`);
                 const profileJson = await profileRes.json();
+                if (profileJson.success) setProfileData(profileJson.profile);
 
-                if (profileJson.success) {
-                    setProfileData(profileJson.profile);
-                }
-
-                // 2. Kullanıcının Kendi Paylaşımlarını Çek
-                // Backend'de "/api/posts/user/:username" şeklinde bir route olduğunu varsayıyoruz
                 const postsRes = await fetch(`${baseUrl}/api/posts/user/${username}`);
                 const postsJson = await postsRes.json();
 
                 if (postsJson.success) {
-                    // SQL'den gelen ImageUrl'leri başına baseUrl ekleyerek map'liyoruz
-                    const formattedPosts = postsJson.posts.map(post => ({
-                        id: post.Id,
-                        image: `${baseUrl}${post.ImageUrl}`
-                    }));
-                    setUserPosts(formattedPosts);
+                    // 2. Verileri ham haliyle saklıyoruz ki UserSharingCard içinde kullanabilelim
+                    setUserPosts(postsJson.posts);
                 }
             } catch (error) {
                 console.error("Profil verileri çekilemedi:", error);
@@ -46,7 +39,6 @@ const Profile = () => {
                 setLoading(false);
             }
         };
-
         fetchProfileAndPosts();
     }, [username]);
 
@@ -56,7 +48,15 @@ const Profile = () => {
     const isOwnProfile = user && user.username === profileData.Username;
     const displayAvatar = profileData.AvatarUrl 
         ? `${baseUrl}${profileData.AvatarUrl}` 
-        : `https://ui-avatars.com/api/?name=${profileData.FullName}&background=random&color=fff&size=128`;
+        : `${defaultAvatar}`;
+
+    // 3. Galeri sekmesi için sadece resimli olanları filtreleyip GalleryArea formatına sokuyoruz
+    const galleryImages = userPosts
+        .filter(post => post.ImageUrl)
+        .map(post => ({
+            id: post.Id,
+            image: `${baseUrl}${post.ImageUrl}`
+        }));
 
     return (
         <div className="profile-page">
@@ -77,7 +77,6 @@ const Profile = () => {
 
                     <div className="profile-stats">
                         <div><span>{userPosts.length}</span> gönderi</div>
-                        {/* İleride 'Saved' tablosu bağlandığında burası da dinamikleşecek */}
                         <div><span>0</span> kaydedilen</div>
                     </div>
 
@@ -90,11 +89,44 @@ const Profile = () => {
                 </div>
             </header>
 
-            <div className="profile-divider"></div>
+            {/* 4. Sekme Butonları */}
+            <div className="profile-tabs-container">
+                <button 
+                    className={`profile-tab-btn ${activeTab === 'posts' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('posts')}
+                >
+                    📝 Paylaşımlar
+                </button>
+                <button 
+                    className={`profile-tab-btn ${activeTab === 'gallery' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('gallery')}
+                >
+                    🖼️ Galeri
+                </button>
+            </div>
 
-            <div className="profile-gallery-container">
-                {/* 3. Gerçek postları GalleryArea'ya gönderiyoruz[cite: 14, 24] */}
-                <GalleryArea images={userPosts} />
+            <div className="profile-content-display">
+                {activeTab === 'posts' ? (
+                    // SEKME 1: Tüm Postlar (Resimli veya Resimsiz)
+                    <div className="profile-posts-stream">
+                        {userPosts.length > 0 ? (
+                            userPosts.map(post => (
+                                <UserSharingCard key={post.Id} sharingCard={post} />
+                            ))
+                        ) : (
+                            <div className="empty-state">Henüz bir paylaşım yok.</div>
+                        )}
+                    </div>
+                ) : (
+                    // SEKME 2: Sadece Galeri (Sadece resimli olanlar)
+                    <div className="profile-gallery-wrapper">
+                        {galleryImages.length > 0 ? (
+                            <GalleryArea images={galleryImages} />
+                        ) : (
+                            <div className="empty-state">Henüz hiç fotoğraf paylaşılmamış.</div>
+                        )}
+                    </div>
+                )}
             </div>
         </div>
     );

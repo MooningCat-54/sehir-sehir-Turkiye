@@ -13,42 +13,41 @@ export const AuthProvider = ({children}) => {
     const [isLoading, setIsLoading] = useState(true);
 
     
+    // AuthContext.jsx içindeki useEffect bloğu
     useEffect(() => {
         const checkAuthStatus = async () => {
             const token = localStorage.getItem('token');
-            const storedName = localStorage.getItem('name');
-            const storedUserName = localStorage.getItem('username');
+            const storedUserId = localStorage.getItem('userId');
 
-            if(token && storedName) {
+            if (token && storedUserId) {
                 try {
                     const response = await fetch('http://localhost:5000/api/auth/verify', {
                         method: 'GET',
-                        headers: {'Authorization': `Bearer ${token}`}
+                        headers: { 'Authorization': `Bearer ${token}` }
                     });
-                    if(response.ok) {
+
+                    // GÖVDETİ BURADA BİR KEZ OKUYORUZ VE DEĞİŞKENE ATIYORUZ
+                    const data = await response.json(); 
+
+                    if (response.ok && data.success) {
+                        // Artık data içindeki bilgileri güvenle kullanabiliriz
                         setUser({
-                            name: storedName,
-                            username: storedUserName,
+                            userId: data.userId,
+                            username: data.username,
+                            isAdmin: data.isAdmin === true || data.isAdmin === 1 || data.isAdmin === 'true',
                             token: token
                         });
+                    } else {
+                        logout(); // Geçersizse her şeyi temizle
                     }
-                    else {
-                        localStorage.removeItem('token');
-                        localStorage.removeItem('name');
-                        localStorage.removeItem('username');
-                        setUser(null);
-                    }
-                }
-                catch(error) {
+                } catch (error) {
+                    console.error("Verify Hatası:", error);
                     setUser(null);
                 }
             }
-
             setIsLoading(false);
         };
-
         checkAuthStatus();
-
     }, []);
 
 
@@ -92,43 +91,42 @@ export const AuthProvider = ({children}) => {
         try {
             const response = await fetch('http://localhost:5000/api/auth/login', {
                 method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({email, password})
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
             });
 
+            // Burada da sadece bir kez okuyoruz
             const data = await response.json();
 
-            if (response.ok) {
-                // 1. Backend'den gelen tüm önemli verileri localStorage'a yazıyoruz[cite: 16]
+            if (response.ok && data.success) {
                 localStorage.setItem('token', data.token);
-                localStorage.setItem('name', data.name);
+                localStorage.setItem('userId', data.userId);
                 localStorage.setItem('username', data.username);
                 
-                // 2. State içine sadece isim değil, avatar bilgisini de ekliyoruz
-                // Bu sayede giriş yapınca NavBar'daki resim anında güncellenir.
                 setUser({
-                    name: data.name, 
-                    username: data.username, 
-                    email: data.email,
-                    avatarUrl: data.avatarUrl // Backend login cevabına bunu ekledik[cite: 2]
+                    userId: data.userId,
+                    username: data.username,
+                    isAdmin: data.isAdmin,
+                    token: data.token
                 });
-
                 return true;
             } else {
                 alert(data.message || "Giriş başarısız.");
                 return false;
             }
-        } catch(error) {
-            console.error("Giriş hatası:", error);
-            alert("Sunucuya ulaşılamıyor.");
+        } catch (error) {
+            console.error("Login Hatası:", error);
+            alert("Sunucuya ulaşılamıyor. Lütfen backend'in çalıştığından emin ol!");
             return false;
         }
     };
-    
+        
     const logout = () => {
         localStorage.removeItem('token');
         localStorage.removeItem('name');
         localStorage.removeItem('username');
+        localStorage.removeItem('userId');
+        localStorage.removeItem('isAdmin'); // Temizlemeyi unutma
 
         setUser(null);
     }

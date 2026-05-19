@@ -144,10 +144,12 @@ const ContentCard = ({ data, onUnsave }) => {
             </div>
             
             {isModalOpen && (
-                <AdminPlaceModal 
-                    onClose={handleCloseModel} 
-                    initialData={data} 
-                />
+                <div onClick={(e) => e.stopPropagation()}>
+                    <AdminPlaceModal 
+                        onClose={handleCloseModel} 
+                        initialData={data} 
+                    />
+                </div>
             )}
         </div>
     );

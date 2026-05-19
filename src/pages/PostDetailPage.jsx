@@ -10,7 +10,7 @@ import CreatePostModal from '../components/CreatePostModal';
 
 
 import '../components/css/UserSharingCard.css'; 
-import './css/PostDetailPage.css' // <-- Yeni CSS Dosyamız Buraya Eklendi
+import './css/PostDetailPage.css'
 
 const PostDetailPage = () => {
     const { id } = useParams();
@@ -49,9 +49,11 @@ const PostDetailPage = () => {
                 if (commentData.success) {
                     setComments(commentData.comments);
                 }
-            } catch (err) {
+            } 
+            catch (err) {
                 console.error("Detay sayfası yükleme hatası:", err);
-            } finally {
+            } 
+            finally {
                 setLoading(false);
             }
         };
@@ -87,34 +89,31 @@ const PostDetailPage = () => {
                 setComments(prev => [newCommentObj, ...prev]);
                 setNewComment("");
             }
-        } catch (err) {
+        }
+        catch (err) {
             console.error("Yorum eklenirken hata oluştu:", err);
         }
     };
 
-    // PostDetailPage.jsx içindeki handleAction fonksiyonunu backend beklentisine göre güncelliyoruz:
     const handleAction = async (type) => {
         try {
-            // Güvenlik Duvarı: Kullanıcı giriş yapmadıysa işlem yaptırma
             if (!user) {
                 alert("Beğeni/Dislike işlemi gerçekleştirebilmek için lütfen giriş yapın!");
                 return;
             }
 
-            // Orijinal bağlantıya sadık kalıyoruz: body içinde hem userId hem type gönderiyoruz
             const res = await fetch(`${baseUrl}/api/posts/${id}/interact`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ 
-                    userId: user.userId || user.UserId, // Backend'in beklediği parametre
-                    type: type                          // Backend interactionType yerine 'type' bekliyor
+                    userId: user.userId || user.UserId,
+                    type: type                          
                 })
             });
             
             const data = await res.json();
 
             if (data.success) {
-                // Backend'den dönen güncel istatistikleri doğrudan state'e yediriyoruz
                 setStats({
                     likes: data.likes,
                     dislikes: data.dislikes,
@@ -136,7 +135,6 @@ const PostDetailPage = () => {
                     'Content-Type': 'application/json', 
                     'Authorization': `Bearer ${token}` 
                 },
-                // Sayısal eşleşme garantisi için Number(id) yaptık
                 body: JSON.stringify({ targetId: Number(id), itemType: 'POST' })
             });
             const result = await res.json();
@@ -173,7 +171,6 @@ const PostDetailPage = () => {
 
     return (
         <div className="post-detail-container">
-            {/* 1. BÖLÜM: BÜYÜTÜLMÜŞ ANA KART */}
             <div className="usersharingcard-card-container">
                 <DropdownMenu options={userSharingOptions} />
                 {post.ImageUrl && (
@@ -201,7 +198,6 @@ const PostDetailPage = () => {
                 </div>
             </div>
 
-            {/* 2. BÖLÜM: TWITTER TARZI INPUT ALANI */}
             <div className="comment-form-container">
                 <form onSubmit={handleAddComment} className="comment-form">
                     <img 
@@ -222,7 +218,6 @@ const PostDetailPage = () => {
                 </form>
             </div>
 
-            {/* 3. BÖLÜM: YORUMLAR (YANITLAR) AKIŞI */}
             <div style={{ marginTop: '15px' }}>
                 <h3 className="replies-title">Yanıtlar</h3>
                 {comments.length === 0 ? (

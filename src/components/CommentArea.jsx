@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import Comment from './Comment';
-import { useAuth } from '../context/AuthContext'; // Giriş yapan kullanıcıyı kontrol etmek için
+import { useAuth } from '../context/AuthContext';
 import './css/CommentArea.css'
 
 const CommentArea = ({ postId }) => {
-    const { user } = useAuth(); // Kullanıcı oturum bilgisini çek[cite: 16]
-    const [comments, setComments] = useState([]); // Mock data temizlendi
+    const { user } = useAuth();
+    const [comments, setComments] = useState([]);
     const [newComment, setNewComment] = useState('');
     const [loading, setLoading] = useState(false);
     const baseUrl = "http://localhost:5000";
@@ -15,18 +15,17 @@ const CommentArea = ({ postId }) => {
         ? `${baseUrl}${user.avatar}` 
         : defaultAvatar;
 
-    // 1. Veritabanından (MSSQL) yorumları çek[cite: 4, 13]
     useEffect(() => {
         const fetchComments = async () => {
             try {
-                // DÜZELTME: GET isteği kullanılır, body gönderilmez
                 const response = await fetch(`${baseUrl}/api/comments/${postId}`); 
                 const data = await response.json();
                 
                 if (data.success) {
                     setComments(data.comments);
                 }
-            } catch (error) {
+            } 
+            catch (error) {
                 console.error("Yorumlar çekilemedi:", error);
             }
         };
@@ -34,7 +33,6 @@ const CommentArea = ({ postId }) => {
         if (postId) fetchComments();
     }, [postId]);
 
-    // 2. Yeni yorum gönder[cite: 4, 20]
     const handleSend = async () => {
         if (!user || newComment.trim() === '') return;
         
@@ -55,24 +53,23 @@ const CommentArea = ({ postId }) => {
             if (data.success) {
                 setNewComment(''); // Input'u temizle
                 
-                // BEYAZ EKRANI ÖNLEYEN ÇÖZÜM: 
-                // Manuel ekleme yapmak yerine mevcut fetch fonksiyonunu tekrar çağırıyoruz
                 const refreshRes = await fetch(`${baseUrl}/api/comments/${postId}`);
                 const refreshData = await refreshRes.json();
                 if (refreshData.success) {
                     setComments(refreshData.comments);
                 }
             }
-        } catch (error) {
+        } 
+        catch (error) {
             console.error("Yorum gönderim hatası:", error);
-        } finally {
+        } 
+        finally {
             setLoading(false);
         }
     };
 
     return (
         <div className="comment-area-container">
-            {/* 1. Giriş kontrolü aynı kalıyor */}
             {user ? (
                 <div className="comment-area-writing-container">
                     <img 
@@ -104,21 +101,19 @@ const CommentArea = ({ postId }) => {
             )}
 
             <div>
-                {/* 2. DÜZELTME: 'comments' dizisinin varlığını ve uzunluğunu kontrol ediyoruz */}
                 {Array.isArray(comments) && comments.length > 0 ? (
                     comments.map(c => (
                         <Comment 
-                            key={c.Id} // SQL'den gelen büyük harf 'Id'
+                            key={c.Id}
                             user={{ 
                                 name: c.Username, 
                                 avatar: c.AvatarUrl 
                             }} 
-                            text={c.CommentText} // SQL kolon ismi
+                            text={c.CommentText}
                             date={new Date(c.CreatedAt).toLocaleDateString('tr-TR')} 
                         />
                     ))
                 ) : (
-                    /* 3. Veri yoksa veya yükleniyorsa kullanıcıya mesaj gösteriyoruz */
                     <p style={{ textAlign: 'center', color: '#888', padding: '10px' }}>
                         Henüz yorum yapılmamış. İlk yorumu sen yap!
                     </p>

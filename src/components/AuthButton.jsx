@@ -9,7 +9,7 @@ const AuthButton = () => {
 
         <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '15px 20px' }}>
                 <button 
-                    onClick={() => navigate('/auth/login')} // Tıklanınca /auth adresine git
+                    onClick={() => navigate('/auth/login')}
                     style={{
                         padding: '10px 20px', 
                         backgroundColor: '#1877f2', 

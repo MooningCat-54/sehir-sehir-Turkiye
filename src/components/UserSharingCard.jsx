@@ -21,7 +21,7 @@ const UserSharingCard = ({ data, onUnsave }) => {
     } = data;
 
     const handleDelete = async () => {
-        const postId = Id; // Yukarıda destruct ettiğin Id'yi doğrudan kullanıyoruz
+        const postId = Id;
 
         if (!window.confirm("Bu paylaşımı silmek istediğinize emin misiniz?")) return;
 
@@ -39,29 +39,30 @@ const UserSharingCard = ({ data, onUnsave }) => {
             if (result.success) {
                 alert("Paylaşım başarıyla silindi.");
                 window.location.reload();
-            } else {
+            } 
+            else {
                 alert("Hata: " + result.message);
             }
-        } catch (err) {
+        } 
+        catch (err) {
             console.error("Silme hatası:", err);
         }
     };
 
     const handleEdit = () => {
-        setIsModalOpen(true); // Modalı açar
+        setIsModalOpen(true);
     };
 
     const handleCloseModal = () => {
-        setIsModalOpen(false); // Modalı kapatır
+        setIsModalOpen(false);
     };
 
     const handleSave = () => {
         console.log("Kaydedildi, post ID:", Id);
-        // Buraya ileride SavedItems tablosuna atılacak istek gelecek
     };
 
     const handleShare = () => {
-        const shareUrl = `${window.location.origin}/posts/${Id}`; // Veya özel post linki
+        const shareUrl = `${window.location.origin}/posts/${Id}`;
         navigator.clipboard.writeText(shareUrl)
             .then(() => alert("Bağlantı kopyalandı!"))
             .catch(err => console.error("Kopyalama hatası:", err));
@@ -71,7 +72,6 @@ const UserSharingCard = ({ data, onUnsave }) => {
         alert("Gönderi bildirildi.");
     };
 
-    // YARDIMCI FONKSİYON: Gelen veriyi güvenli bir şekilde sayıya veya null'a çevirir
     const parseStatus = (val) => {
         if (val === null || val === undefined) return null;
         return Number(val);
@@ -110,7 +110,8 @@ const UserSharingCard = ({ data, onUnsave }) => {
                     myStatus: data.myStatus
                 });
             }
-        } catch (err) { console.error(err); }
+        } 
+        catch (err) { console.error(err); }
     };
 
     const handleSaveToggle = async () => {
@@ -125,7 +126,7 @@ const UserSharingCard = ({ data, onUnsave }) => {
                 method: 'POST',
                 headers: { 
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}` // AuthMiddleWare'in token'ı yakalaması için şart
+                    'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify({ targetId: Id, itemType: 'POST' })
             });
@@ -137,7 +138,8 @@ const UserSharingCard = ({ data, onUnsave }) => {
                 }    
                 setSavedStatus(result.isSaved);
             }
-        } catch (err) { 
+        } 
+        catch (err) { 
             console.error("Kaydetme hatası:", err); 
         }
     };
@@ -212,7 +214,7 @@ const UserSharingCard = ({ data, onUnsave }) => {
                     <CreatePostModal 
                         isOpen={isModalOpen}
                         onClose={handleCloseModal} 
-                        initialData={data} // Kartın orijinal verisini modal içine paslıyoruz
+                        initialData={data}
                     />
                 </div>
             )}

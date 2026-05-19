@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import './css/DropDownMenu.css'; // Dosya yolunun doğruluğundan emin ol
+import './css/DropDownMenu.css';
 
 const DropdownMenu = ({ options }) => {
     const [isOpen, setIsOpen] = useState(false);

@@ -7,12 +7,12 @@
     background-color: #ff4757;
     color: white;
     border-radius: 50%;
-    z-index: 9999999; /* Sayıyı iyice artırdık */
+    z-index: 9999999;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    border: 5px solid white; /* Görünürlüğü artırmak için çerçeve */
+    border: 5px solid white;
 }
 
 

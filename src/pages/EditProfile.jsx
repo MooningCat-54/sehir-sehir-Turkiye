@@ -9,7 +9,6 @@ const EditProfile = () => {
     const fileInputRef = useRef(null);
     const baseUrl = "http://localhost:5000";
     const defaultImage = `${baseUrl}/uploads/avatars/default_avatar.png`;
-
     const [bio, setBio] = useState('');
     const [preview, setPreview] = useState(null);
     const [selectedFile, setSelectedFile] = useState(null);
@@ -28,11 +27,13 @@ const EditProfile = () => {
                     
                     if (p.AvatarUrl && !p.AvatarUrl.includes('default_avatar.png')) {
                         setPreview(`${baseUrl}${p.AvatarUrl}`);
-                    } else {
+                    } 
+                    else {
                         setPreview(defaultImage);
                     }
                 }
-            } catch (err) {
+            } 
+            catch (err) {
                 console.error("Profil bilgileri yüklenemedi:", err);
                 setPreview(defaultImage);
             }
@@ -70,9 +71,11 @@ const EditProfile = () => {
         if (selectedFile) {
             formData.append('avatar', selectedFile);
             formData.append('isImageRemoved', 'false');
-        } else if (isImageRemoved) {
+        } 
+        else if (isImageRemoved) {
             formData.append('isImageRemoved', 'true'); 
-        } else {
+        } 
+        else {
             formData.append('isImageRemoved', 'false');
         }
 
@@ -90,13 +93,16 @@ const EditProfile = () => {
                 alert("Profil güncellendi!");
                 window.dispatchEvent(new Event('profileUpdateted'));
                 navigate(`/${user.username}/profile`);
-            } else {
+            } 
+            else {
                 alert("Hata: " + data.error);
             }
-        } catch (err) {
+        } 
+        catch (err) {
             console.error("Save Error:", err);
             alert("Bağlantı hatası.");
-        } finally {
+        } 
+        finally {
             setLoading(false);
         }
     };

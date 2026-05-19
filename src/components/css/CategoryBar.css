@@ -11,8 +11,8 @@
     top: 65px;
     z-index: 998;
     scrollbar-width: none;
-    -ms-overflow-style: none; /*ie için scrollbar gizleme*/
-    -webkit-scrollbar: none; /*chrome ve safari için*/
+    -ms-overflow-style: none;
+    -webkit-scrollbar: none;
 }
 
 .bar-button {

@@ -3,8 +3,6 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import ShareButton from '../components/ShareButton';
 import SaveButton from '../components/SaveButton';
-
-// YENİ CSS DOSYASININ IMPORT EDİLMESİ
 import './css/OfficialPlaceDetailPage.css';
 
 const OfficialPlaceDetailPage = () => {
@@ -28,9 +26,11 @@ const OfficialPlaceDetailPage = () => {
                     setPlace(data.place);
                     setSavedStatus(Number(data.place.IsSaved) === 1);
                 }
-            } catch (err) {
+            } 
+            catch (err) {
                 console.error("Resmi rota yükleme hatası:", err);
-            } finally {
+            } 
+            finally {
                 setLoading(false);
             }
         };
@@ -52,7 +52,8 @@ const OfficialPlaceDetailPage = () => {
             });
             const result = await res.json();
             if (result.success) setSavedStatus(result.isSaved);
-        } catch (err) { console.error("Kaydetme hatası:", err); }
+        }
+        catch (err) { console.error("Kaydetme hatası:", err); }
     };
 
     if (loading) return <div className="no-comments-box">Yükleniyor...</div>;
@@ -62,10 +63,8 @@ const OfficialPlaceDetailPage = () => {
         <div className="official-detail-container">
             <div className="official-detail-card">
                 
-                {/* BAŞLIK */}
                 <h1 className="official-detail-title">{place.Title}</h1>
                 
-                {/* METADATA (KONUM & KATEGORİ) */}
                 <div className="official-detail-meta-bar">
                     <span className="official-detail-location">
                         📍 {place.City} / {place.LocationDetail}
@@ -77,24 +76,20 @@ const OfficialPlaceDetailPage = () => {
                     )}
                 </div>
 
-                {/* 1. ANA RESİM */}
                 <div className="official-detail-image-wrapper">
                     <img className="official-detail-image" src={`${baseUrl}${place.MainImage}`} alt={place.Title} />
                 </div>
 
-                {/* DETAYLI MAKALELER / GEZİ YAZISI */}
                 <p className="official-detail-content">
                     {place.DetailedContent}
                 </p>
 
-                {/* EĞER VARSA 2. GALERİ RESMİ */}
                 {place.AdditionalImage && (
                     <div className="official-detail-image-wrapper">
                         <img className="official-detail-image" src={`${baseUrl}${place.AdditionalImage}`} alt={`${place.Title} Galeri`} />
                     </div>
                 )}
 
-                {/* AKSİYON BUTONLARI */}
                 <div className="official-detail-action-bar">
                     <ShareButton postId={place.Id} itemType="OFFICIAL" />
                     <SaveButton active={savedStatus} onClick={handleSaveToggle} />

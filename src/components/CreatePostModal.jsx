@@ -2,27 +2,23 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext'; 
 import './css/CreatePostModal.css';
 
-// initialData prop'unu ekledik. Varsayılan olarak null (yani ekleme modu)
 const CreatePostModal = ({ isOpen, onClose, initialData = null }) => {
     const { user } = useAuth(); 
-    const isEditMode = !!initialData; // initialData varsa true olur, düzenleme moduna geçer
-
-    // Form state'lerini initialData'ya bağlıyoruz (büyük/küçük harf varyasyonlarını garantiye alarak)
+    const isEditMode = !!initialData;
     const [location, setLocation] = useState('');
     const [description, setDescription] = useState('');
     const [category, setCategory] = useState('Doğa'); 
     const [selectedFile, setSelectedFile] = useState(null);
     const [loading, setLoading] = useState(false);
 
-    // Modal her açıldığında veya initialData değiştiğinde formun içini doldur/sıfırla
     useEffect(() => {
         if (isOpen) {
             if (isEditMode) {
                 setLocation(initialData.City || initialData.city || '');
                 setDescription(initialData.Caption || initialData.caption || '');
                 setCategory(initialData.Category || initialData.category || 'Doğa');
-            } else {
-                // Ekleme modundaysa alanları sıfırla
+            } 
+            else {
                 setLocation('');
                 setDescription('');
                 setCategory('Doğa');
@@ -39,7 +35,7 @@ const CreatePostModal = ({ isOpen, onClose, initialData = null }) => {
 
         const formData = new FormData();
         formData.append('username', user.username); 
-        formData.append('caption', description); // SQL'deki Caption kolonuna gidecek
+        formData.append('caption', description);
         formData.append('city', location);
         formData.append('category', category);
         formData.append('type', 'post'); 
@@ -48,7 +44,6 @@ const CreatePostModal = ({ isOpen, onClose, initialData = null }) => {
             formData.append('image', selectedFile); 
         }
 
-        // DİNAMİK ROTA MANTIĞI: Düzenleme ise PUT ve ID ekle, değilse POST
         const url = isEditMode 
             ? `http://localhost:5000/api/posts/user/update/${initialData.Id || initialData.id}`
             : 'http://localhost:5000/api/posts/add';
@@ -65,14 +60,17 @@ const CreatePostModal = ({ isOpen, onClose, initialData = null }) => {
                 alert(isEditMode ? "Deneyiminiz başarıyla güncellendi! 📝" : "Deneyiminiz paylaşıldı! 🚀");
                 onClose();
                 window.location.reload(); 
-            } else {
+            } 
+            else {
                 const errText = await response.text();
                 alert("Hata oluştu: " + errText);
             }
-        } catch (error) {
+        } 
+        catch (error) {
             console.error("İşlem hatası:", error);
             alert("Sunucuya ulaşılamıyor.");
-        } finally {
+        } 
+        finally {
             setLoading(false);
         }
     };
@@ -81,7 +79,6 @@ const CreatePostModal = ({ isOpen, onClose, initialData = null }) => {
         <div className="modal-overlay" onClick={onClose}>
             <div className="modal-content" onClick={(e) => e.stopPropagation()}>
                 <div className="modal-header">
-                    {/* Başlık moda göre değişiyor */}
                     <h2>{isEditMode ? "Deneyimi Düzenle" : "Yeni Deneyim Paylaş"}</h2>
                     <button className="close-button" onClick={onClose}>&times;</button>
                 </div>
@@ -129,7 +126,7 @@ const CreatePostModal = ({ isOpen, onClose, initialData = null }) => {
                             accept="image/*" 
                             className="file-input" 
                             onChange={(e) => setSelectedFile(e.target.files[0])}
-                            required={!isEditMode} // Düzenleme modunda resim zorunlu değil
+                            required={!isEditMode}
                         />
                     </div>
 

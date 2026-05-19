@@ -26,7 +26,6 @@ const CategoryBar = ({selectedCategories, onSelectCategory}) => {
     return (
         <div className="bar">
             {categories.map((cat) => {
-                // Bu kategori şu anki seçili olanların içinde var mı?
                 const isSelected = cat.name === 'Hepsi' ? selectedCategories.length === 0 : selectedCategories.includes(cat.name);
 
                 return (
@@ -34,10 +33,8 @@ const CategoryBar = ({selectedCategories, onSelectCategory}) => {
                         key={cat.id}
                         onClick={() => onSelectCategory(cat.name)} 
                         className="bar-button"
-                        // Seçiliyse opaklığı tam yap, değilse soluk bırak
                         style={{ 
                             opacity: isSelected ? 1 : 0.6,
-                            // Bonus: Seçiliyse hafif bir yeşilimsi arkaplan verebilirsin
                             backgroundColor: isSelected ? 'rgba(46, 204, 113, 0.1)' : 'transparent' 
                         }} 
                         onMouseDown={(e) => e.currentTarget.style.transform = 'scale(0.95)'}

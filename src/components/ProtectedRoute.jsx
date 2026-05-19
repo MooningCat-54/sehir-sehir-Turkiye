@@ -3,9 +3,7 @@ import { Navigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useState } from "react";
 
-// components/ProtectedRoute.jsx
 const ProtectedRoute = ({children}) => {
-    // 'isloading' değil 'isLoading' olmalı!
     const { user, isLoading } = useAuth(); 
 
     if(isLoading) {

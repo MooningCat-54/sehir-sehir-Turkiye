@@ -1,4 +1,3 @@
-// components/ServerError.jsx VEYA pages/ServerError.jsx
 import React from 'react';
 
 const ServerError = () => {

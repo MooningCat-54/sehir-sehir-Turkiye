@@ -1,4 +1,3 @@
-// src/components/ProfileButton.jsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -16,12 +15,10 @@ const ProfileButton = () => {
         const fetchMiniAvatar = async () => {
             if (user && user.username) {
                 try {
-                    // SQL'den güncel profil verisini çekiyoruz[cite: 2, 28]
                     const response = await fetch(`${baseUrl}/api/auth/profile/${user.username}`);
                     const data = await response.json();
 
                     if (data.success && data.profile) {
-                        // Eğer SQL'de AvatarUrl varsa başına baseUrl ekle, yoksa UI-Avatars oluştur[cite: 14, 28]
                         const avatarSrc = data.profile.AvatarUrl 
                             ? `${baseUrl}${data.profile.AvatarUrl}` 
                             : `${baseUrl}${defaultImage}`;
@@ -36,7 +33,6 @@ const ProfileButton = () => {
 
         fetchMiniAvatar();
 
-        // Profil düzenlendiğinde bu fonksiyonun tekrar çalışmasını tetikliyoruz[cite: 28]
         window.addEventListener('profileUpdateted', fetchMiniAvatar);
 
         return () => window.removeEventListener('profileUpdateted', fetchMiniAvatar);
@@ -44,7 +40,7 @@ const ProfileButton = () => {
     }, [user]);
 
     const handleLogOut = () => {
-        logout(); // Context içindeki temizlik fonksiyonu[cite: 16]
+        logout();
         setIsOpen(false);
         navigate('/auth/login');
     }

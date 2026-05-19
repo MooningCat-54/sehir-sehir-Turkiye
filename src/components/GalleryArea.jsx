@@ -1,4 +1,3 @@
- // src/components/GalleryArea.jsx
 import React from 'react';
 import './css/GalleryArea.css'
 
@@ -18,7 +17,6 @@ const GalleryArea = ({ images }) => {
                         <div className="gallery-image" key={img.id || index}>
                             <img 
                                 className="gallery-image-button" 
-                                // Profile.jsx tarafında baseUrl zaten eklenmişti[cite: 14]
                                 src={img.image} 
                                 alt={`Galeri Görseli ${index}`}
                                 onMouseOver={(e) => e.target.style.transform = 'scale(1.1)'}

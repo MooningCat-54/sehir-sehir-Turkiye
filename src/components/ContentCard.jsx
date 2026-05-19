@@ -11,11 +11,8 @@ const ContentCard = ({ data, onUnsave }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const navigate = useNavigate();
     const { Id, IsSaved } = data;
-
-    // Kaydedilme durumunu tutan dinamik state
     const [savedStatus, setSavedStatus] = useState(Number(IsSaved) === 1);
 
-    // Veriler yenilenirse veya sayfa değişirse state'i güncel tutmak için senkronizasyon
     useEffect(() => {
         setSavedStatus(Number(IsSaved) === 1);
     }, [IsSaved]);
@@ -46,7 +43,8 @@ const ContentCard = ({ data, onUnsave }) => {
                 if (!response.ok) {
                     alert("Silme işlemi başarısız oldu.");
                 }
-            } catch (error) {
+            } 
+            catch (error) {
                 console.error("Silme hatası:", error);
             }
         }
@@ -60,7 +58,6 @@ const ContentCard = ({ data, onUnsave }) => {
         setIsModalOpen(false);
     };
 
-    // Kaydet/Sil (Toggle) fonksiyonu
     const handleSaveToggle = async () => {
         if (!user) {
             alert("Rotaları kaydetmek için lütfen giriş yapın!");
@@ -85,7 +82,8 @@ const ContentCard = ({ data, onUnsave }) => {
                     onUnsave(Id);
                 }
             }
-        } catch (err) { 
+        } 
+        catch (err) { 
             console.error("Resmi rota kaydetme hatası:", err); 
         }
     };
@@ -138,7 +136,6 @@ const ContentCard = ({ data, onUnsave }) => {
                     <span className="card-date">📍 {data.City} / {data.LocationDetail}</span>
                 </div>
                 
-                {/* GERİ GETİRİLEN KATEGORİ ALANI */}
                 {data.Category && (
                     <div className="card-categories" style={{fontSize: '0.8rem', color: '#1877f2', marginTop: '5px'}}>
                         {data.Category}

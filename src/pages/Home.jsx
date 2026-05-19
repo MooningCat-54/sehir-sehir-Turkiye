@@ -35,11 +35,9 @@ const Home = () => {
                 if (officialData.success) setResmiRotalar(officialData.places);
                 if (socialData.success) setKullaniciPaylasimlari(socialData.posts);
             }
-
             catch (error) {
                 console.error("Veri çekme hatası:", error);
             }
-
             finally {
                 setLoading(false);
             }

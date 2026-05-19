@@ -19,8 +19,6 @@ const NavBar = ({allLocations = []}) => {
         return(null);
     }
 
-   
-
     return (
         <nav>
             <div className="logo-area" onClick={() => navigate('/')}>
@@ -29,8 +27,7 @@ const NavBar = ({allLocations = []}) => {
 
             <div className="center-area">
                 <SearchBar />
-                {/* 3. Rastgele öneri artık veritabanındaki gerçek yerleri kullanıyor */}
-                <RandomSuggestionButton locations={allLocations} />
+                <RandomSuggestionButton />
             </div>
 
             <div className="rigth-area">  

@@ -1,4 +1,3 @@
-/* EditProfile.module.css */
 .container {
     max-width: 500px;
     margin: 50px auto;
@@ -76,8 +75,6 @@
     cursor: not-allowed;
 }
 
-/* Mevcut stillerine ekle */
-
 .buttonGroup {
     display: flex;
     flex-direction: column;
@@ -88,7 +85,7 @@
 .saveButton {
     width: 100%;
     padding: 12px;
-    background-color: #1877f2; /* Facebook mavisi */
+    background-color: #1877f2;
     color: white;
     border: none;
     border-radius: 8px;
@@ -110,7 +107,7 @@
     width: 100%;
     padding: 10px;
     background-color: #fff;
-    color: #dc3545; /* Tehlike kırmızısı */
+    color: #dc3545;
     border: 1px solid #dc3545;
     border-radius: 8px;
     font-weight: 500;

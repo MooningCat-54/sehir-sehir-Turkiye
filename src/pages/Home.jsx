@@ -1,4 +1,3 @@
-//home.jsx
 import React, {useState, useEffect} from 'react';
 import {useNavigate, useSearchParams} from 'react-router-dom'
 import CategoryBar from '../components/CategoryBar';
@@ -11,8 +10,8 @@ import './css/Home.css';
 
 const Home = () => {
     const [activeTab, setActiveTab] = useState('official');
-    const [resmiRotalar, setResmiRotalar] = useState([]); // 2. Boş state olarak başlat[cite: 13]
-    const [kullaniciPaylasimlari, setKullaniciPaylasimlari] = useState([]); // 3. Boş state olarak başlat[cite: 13]
+    const [resmiRotalar, setResmiRotalar] = useState([]); 
+    const [kullaniciPaylasimlari, setKullaniciPaylasimlari] = useState([]); 
     const [loading, setLoading] = useState(true);
     const {user} = useAuth();
     const [searchParams] = useSearchParams();
@@ -21,57 +20,53 @@ const Home = () => {
     const [selectedCategories, setSelectedCategories] = useState([]);
     const navigate = useNavigate();
 
+
     useEffect(() => {
         const fetchData = async () => {
             try {
-                // 1. Giriş yapan kullanıcının ID'sini alıyoruz (user objesi AuthContext'ten gelmeli)
                 const userId = user?.userId || 0; 
-
-                // 2. URL'in sonuna userId'yi parametre (query string) olarak ekliyoruz
                 const [officialRes, socialRes] = await Promise.all([
-                    fetch('http://localhost:5000/api/posts/official'),
-                    fetch(`http://localhost:5000/api/posts/all?userId=${userId}`) // Burası kritik!
+                    fetch(`http://localhost:5000/api/posts/official?userId=${userId}`),
+                    fetch(`http://localhost:5000/api/posts/all?userId=${userId}`)
                 ]);
-
                 const officialData = await officialRes.json();
                 const socialData = await socialRes.json();
 
                 if (officialData.success) setResmiRotalar(officialData.places);
                 if (socialData.success) setKullaniciPaylasimlari(socialData.posts);
-            } catch (error) {
+            }
+
+            catch (error) {
                 console.error("Veri çekme hatası:", error);
-            } finally {
+            }
+
+            finally {
                 setLoading(false);
             }
         };
 
         fetchData();
-    }, [user]); // user değiştiğinde (giriş/çıkış) verileri tekrar çek ki oylar güncellensin
+    }, [user]);
 
 
     const handleCategoryToggle = (categoryName) => {
-        // Eğer tıklanan buton "Hepsi" ise, seçili kategorileri tamamen temizle!
         if (categoryName === 'Hepsi') {
             setSelectedCategories([]); 
-            return; // Fonksiyonu burada bitir
+            return;
         }
 
-        // Değilse normal ekleme/çıkarma (Toggle) işlemine devam et
         setSelectedCategories((prevSelected) => {
             if(prevSelected.includes(categoryName)) {
                 return prevSelected.filter((cat) => cat !== categoryName);
-            } 
+            }
+
             else {
                 return [...prevSelected, categoryName];
             }
         });
     };
 
-    //filtreleme algoritması
-
-    // FİLTRELEME MANTIĞI: ÇİFT SÜZGEÇ (Türkçe Karakter Uyumlu)
     const filteredPlaces = resmiRotalar.filter(place => {
-        // SQL'den Category kolonu string veya array olarak gelebilir, ona göre kontrol et
         const categoryMatch = selectedCategories.length === 0 || 
             (place.Category && selectedCategories.every(cat => place.Category.includes(cat)));
 
@@ -115,13 +110,11 @@ const Home = () => {
                 </button>
             </div>
 
-            {/* --- SEKMELERDEN SONRAKİ KISIM --- */}
             <div className="home-grid-area">
                 {activeTab === 'official' ? (
                     <div className="home-on-site-content-grid">
                         {filteredPlaces.length > 0 ? (
                             filteredPlaces.map((yer) => (
-                            // 2. 'data' prop'u ile her bir yerin verisini karta gönder
                             <ContentCard key={yer.Id} data={yer} />
                             ))
                         ) : (
@@ -134,14 +127,12 @@ const Home = () => {
                     <div className="home-sharing-content-layout">
                         <div className="feed-column">
                             {kullaniciPaylasimlari.map(post => (
-                                <UserSharingCard key={post.Id} sharingCard={post} /> 
+                                <UserSharingCard key={post.Id} data={post} /> 
                             ))}
                         </div>
 
-                        {/* 3. ADIM: Sidebar Sütununda kısıtlama mantığı */}
                         <div className="sidebar-column">
                             {user ? (
-                                // Giriş yapılmışsa paylaşım paneli[cite: 16]
                                 <div className="create-post-panel">
                                     <h3>Deneyimlerini Paylaş</h3>
                                     <p>Gezdiğin yerleri diğer gezginlerle paylaş!</p>
@@ -150,7 +141,6 @@ const Home = () => {
                                     </button>
                                 </div>
                             ) : (
-                                // Giriş yapılmamışsa giriş yap butonu[cite: 11]
                                 <div className="create-post-panel login-prompt-panel">
                                     <h3>Keşfetmeye Hazır mısın?</h3>
                                     <p>Paylaşım yapmak için topluluğumuza katıl.</p>

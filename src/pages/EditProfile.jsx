@@ -16,19 +16,16 @@ const EditProfile = () => {
     const [loading, setLoading] = useState(false);
     const [isImageRemoved, setIsImageRemoved] = useState(false);
 
-    // 1. ADIM: Sayfa açıldığında veritabanından güncel profil bilgilerini çekiyoruz
     useEffect(() => {
         const fetchFullProfile = async () => {
             try {
-                // AuthContext'teki kısıtlı 'user' nesnesi yerine veritabanına soruyoruz
                 const response = await fetch(`${baseUrl}/api/auth/profile/${user.username}`);
                 const data = await response.json();
 
                 if (data.success) {
                     const p = data.profile;
-                    setBio(p.Bio || ''); // SQL kolon ismine dikkat (Bio)
+                    setBio(p.Bio || '');
                     
-                    // Eğer veritabanında özel bir avatar yolu varsa onu set et
                     if (p.AvatarUrl && !p.AvatarUrl.includes('default_avatar.png')) {
                         setPreview(`${baseUrl}${p.AvatarUrl}`);
                     } else {
@@ -51,7 +48,7 @@ const EditProfile = () => {
         if (file) {
             setSelectedFile(file);
             setPreview(URL.createObjectURL(file));
-            setIsImageRemoved(false); // Yeni resim seçildi, silme modunu kapat
+            setIsImageRemoved(false);
         }
     };
 
@@ -91,7 +88,6 @@ const EditProfile = () => {
 
             if (response.ok) {
                 alert("Profil güncellendi!");
-                // Navbar'ın güncellenmesi için custom event fırlatıyoruz
                 window.dispatchEvent(new Event('profileUpdateted'));
                 navigate(`/${user.username}/profile`);
             } else {
@@ -149,7 +145,6 @@ const EditProfile = () => {
                         {loading ? 'Kaydediliyor...' : 'Değişiklikleri Kaydet'}
                     </button>
 
-                    {/* ŞART: preview yüklendiyse ve default resmi içermiyorsa butonu göster */}
                     {preview && !preview.includes('default_avatar.png') && (
                         <button 
                             type="button" 

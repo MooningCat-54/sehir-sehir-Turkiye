@@ -1,0 +1,106 @@
+.official-detail-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px 10px;
+}
+
+.official-detail-card {
+    padding: 30px;
+    background-color: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Başlık Alanı */
+.official-detail-title {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: #0f1419;
+    margin-bottom: 12px;
+    line-height: 1.2;
+    letter-spacing: -0.5px;
+}
+
+/* Alt Bilgi Barı (Konum ve Kategori Kapsayıcı) */
+.official-detail-meta-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eff3f4;
+}
+
+.official-detail-location {
+    font-size: 1rem;
+    color: #536471;
+    font-weight: 500;
+}
+
+.official-detail-category-badge {
+    background-color: #e8f5fe;
+    color: #1d9bf0;
+    padding: 6px 14px;
+    border-radius: 99px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+/* Görsel Sarmalayıcı */
+.official-detail-image-wrapper {
+    width: 100%;
+    max-height: 450px;
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.official-detail-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.3s ease;
+}
+
+/* 1500-2000 Karakterlik Geniş Makale Metni */
+.official-detail-content {
+    font-size: 1.15rem;
+    line-height: 1.8;
+    color: #2f3336;
+    white-space: pre-line;
+    text-align: justify;
+    margin: 24px 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* Alt Etkileşim Butonları Barı */
+.official-detail-action-bar {
+    display: flex;
+    gap: 24px;
+    border-top: 1px solid #eff3f4;
+    padding-top: 18px;
+    margin-top: 24px;
+}
+
+/* Mobil Uyumluluk (Responsive) */
+@media (max-width: 576px) {
+    .official-detail-card {
+        padding: 16px;
+    }
+    .official-detail-title {
+        font-size: 1.6rem;
+    }
+    .official-detail-meta-bar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    .official-detail-content {
+        font-size: 1.05rem;
+        line-height: 1.7;
+    }
+}

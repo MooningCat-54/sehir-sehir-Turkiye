@@ -7,13 +7,21 @@ import SaveButton from './SaveButton';
 import CommentArea from './CommentArea';
 import './css/UserSharingCard.css';
 import DropdownMenu from './DropDownMenu';
+import CreatePostModal from './CreatePostModal';
+import { useNavigate } from 'react-router-dom';
 
-const UserSharingCard = ({ sharingCard }) => {
+const UserSharingCard = ({ data, onUnsave }) => {
     const { user } = useAuth();
     const baseUrl = "http://localhost:5000";
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const navigate = useNavigate()
+    const { 
+        ImageUrl, Caption, City, Username, AvatarUrl, Id,
+        LikeCount, DislikeCount, UserInteraction, IsSaved
+    } = data;
 
     const handleDelete = async () => {
-        const postId = sharingCard.Id// Props ismine göre kontrol et
+        const postId = Id; // Yukarıda destruct ettiğin Id'yi doğrudan kullanıyoruz
 
         if (!window.confirm("Bu paylaşımı silmek istediğinize emin misiniz?")) return;
 
@@ -39,29 +47,34 @@ const UserSharingCard = ({ sharingCard }) => {
         }
     };
 
-    const userSharingOptions = [
-        { label: 'Kaydet', icon: '🔖', action: () => handleSave() },
-        { label: 'Paylaş', icon: '🔗', action: () => handleShare() },
-        // Bildir butonu: Admin değilse VE post sahibi değilse görünsün
-        ...(!user?.isAdmin && user?.userId !== sharingCard.UserId ? [
-            { label: 'Bildir', icon: '🚩', action: () => handleReport() }
-        ] : []),
-        // Sil/Düzenle: Adminse VEYA postun sahibiyse görünsün
-        ...(user?.isAdmin || user?.userId === sharingCard.UserId ? [
-            { label: 'Düzenle', icon: '✏️', action: () => handleEdit() },
-            { label: 'Sil', icon: '🗑️', action: () => handleDelete() }
-        ] : [])
-    ];
+    const handleEdit = () => {
+        setIsModalOpen(true); // Modalı açar
+    };
 
-    const { 
-        ImageUrl, Caption, City, Username, AvatarUrl, Id,
-        LikeCount, DislikeCount, UserInteraction 
-    } = sharingCard;
+    const handleCloseModal = () => {
+        setIsModalOpen(false); // Modalı kapatır
+    };
+
+    const handleSave = () => {
+        console.log("Kaydedildi, post ID:", Id);
+        // Buraya ileride SavedItems tablosuna atılacak istek gelecek
+    };
+
+    const handleShare = () => {
+        const shareUrl = `${window.location.origin}/posts/${Id}`; // Veya özel post linki
+        navigator.clipboard.writeText(shareUrl)
+            .then(() => alert("Bağlantı kopyalandı!"))
+            .catch(err => console.error("Kopyalama hatası:", err));
+    };
+
+    const handleReport = () => {
+        alert("Gönderi bildirildi.");
+    };
 
     // YARDIMCI FONKSİYON: Gelen veriyi güvenli bir şekilde sayıya veya null'a çevirir
     const parseStatus = (val) => {
         if (val === null || val === undefined) return null;
-        return Number(val); // "1" -> 1 yapar
+        return Number(val);
     };
 
     const [stats, setStats] = useState({
@@ -70,26 +83,27 @@ const UserSharingCard = ({ sharingCard }) => {
         myStatus: parseStatus(UserInteraction)
     });
 
+    const [savedStatus, setSavedStatus] = useState(Number(IsSaved) === 1);
+
     useEffect(() => {
-    setStats({
-        likes: Number(LikeCount) || 0,
-        dislikes: Number(DislikeCount) || 0,
-        // Number() kullanarak gelen veriyi kesin olarak sayıya çeviriyoruz
-        myStatus: UserInteraction !== null ? Number(UserInteraction) : null
-    });
-}, [LikeCount, DislikeCount, UserInteraction]);
+        setStats({
+            likes: Number(LikeCount) || 0,
+            dislikes: Number(DislikeCount) || 0,
+            myStatus: UserInteraction !== null ? Number(UserInteraction) : null
+        });
+        setSavedStatus(Number(IsSaved) === 1);
+    }, [LikeCount, DislikeCount, UserInteraction, IsSaved]);
 
     const handleAction = async (type) => {
         try {
             const res = await fetch(`${baseUrl}/api/posts/${Id}/interact`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userId: user.userId, type: type })
+                body: JSON.stringify({ userId: user.userId || user.UserId, type: type })
             });
             const data = await res.json();
 
             if (data.success) {
-                // Backend'den gelen kesin rakamlar neyse o!
                 setStats({
                     likes: data.likes,
                     dislikes: data.dislikes,
@@ -99,11 +113,59 @@ const UserSharingCard = ({ sharingCard }) => {
         } catch (err) { console.error(err); }
     };
 
+    const handleSaveToggle = async () => {
+        if (!user) {
+            alert("İçerikleri kaydetmek için lütfen giriş yapın!");
+            return;
+        }
+
+        try {
+            const token = localStorage.getItem('token');
+            const res = await fetch(`${baseUrl}/api/posts/save-toggle`, {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}` // AuthMiddleWare'in token'ı yakalaması için şart
+                },
+                body: JSON.stringify({ targetId: Id, itemType: 'POST' })
+            });
+            const result = await res.json();
+
+            if (result.success) {
+                if (!result.isSaved && onUnsave) {
+                    onUnsave(Id);
+                }    
+                setSavedStatus(result.isSaved);
+            }
+        } catch (err) { 
+            console.error("Kaydetme hatası:", err); 
+        }
+    };
+
     const displayAvatar = AvatarUrl ? `${baseUrl}${AvatarUrl}` : `https://ui-avatars.com/api/?name=${Username}&background=random&color=fff`;
 
+    const userSharingOptions = [
+        { label: savedStatus ? 'Kaydedildi' : 'Kaydet', icon: '🔖', action: handleSaveToggle },
+        { label: 'Paylaş', icon: '🔗', action: () => handleShare() },
+        
+        ...(!user?.isAdmin && (user?.userId !== data.UserId && user?.UserId !== data.UserId) ? [
+            { label: 'Bildir', icon: '🚩', action: () => handleReport() }
+        ] : []),
+        
+        ...(user?.isAdmin || user?.userId === data.UserId || user?.UserId === data.UserId ? [
+            { label: 'Düzenle', icon: '✏️', action: () => handleEdit() },
+            { label: 'Sil', icon: '🗑️', action: () => handleDelete() }
+        ] : [])
+    ];
+
     return (
-        <div className="usersharingcard-card-container">
-            {user && <DropdownMenu options={userSharingOptions} />}
+        <div className="usersharingcard-card-container"
+            onClick={() => navigate(`/posts/${Id}`)}
+            style={{ cursor: 'pointer' }}
+        >
+            <div onClick={(e) => e.stopPropagation()}>
+                {user && <DropdownMenu options={userSharingOptions} />}
+            </div>
 
             {ImageUrl && (
                 <div className="usersharingcard-image-container">
@@ -122,7 +184,7 @@ const UserSharingCard = ({ sharingCard }) => {
 
                 <p className="usersharingcard-text-content-container">{Caption}</p>
 
-                <div className="usersharingcard-engagement-buttons-container">
+                <div className="usersharingcard-engagement-buttons-container" onClick={(e) => e.stopPropagation()}>
                     <LikeButton 
                         count={stats.likes} 
                         active={stats.myStatus === 1} 
@@ -134,13 +196,26 @@ const UserSharingCard = ({ sharingCard }) => {
                         onClick={() => handleAction(2)}
                     />
                     <ShareButton postId={Id} />
-                    <SaveButton postId={Id} />
+                    <SaveButton 
+                        active={savedStatus} 
+                        onClick={handleSaveToggle} 
+                    />
                 </div>
                 
-                <div className="usersharingcard-comment-container">
+                <div className="usersharingcard-comment-container" onClick={(e) => e.stopPropagation()}>
                     <CommentArea postId={Id} /> 
                 </div>
             </div>
+
+            {isModalOpen && (
+                <div>
+                    <CreatePostModal 
+                        isOpen={isModalOpen}
+                        onClose={handleCloseModal} 
+                        initialData={data} // Kartın orijinal verisini modal içine paslıyoruz
+                    />
+                </div>
+            )}
         </div>
     );
 };

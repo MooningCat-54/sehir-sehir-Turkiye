@@ -7,10 +7,8 @@ import './css/ProfileButton.css'
 const ProfileButton = () => {
     const [isOpen, setIsOpen] = useState(false);
     const navigate = useNavigate();
-    const { user, logout } = useAuth(); // AuthContext'ten gelen veriler[cite: 16]
-    
-    // Varsayılan resim: Kullanıcıda hiç resim yoksa[cite: 28]
-    const defaultImage = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+    const { user, logout } = useAuth();
+    const defaultImage = "/uploads/avatars/default_avatar.png";
     const [miniAvatar, setMiniAvatar] = useState(null); 
     const baseUrl = "http://localhost:5000";
 
@@ -26,7 +24,7 @@ const ProfileButton = () => {
                         // Eğer SQL'de AvatarUrl varsa başına baseUrl ekle, yoksa UI-Avatars oluştur[cite: 14, 28]
                         const avatarSrc = data.profile.AvatarUrl 
                             ? `${baseUrl}${data.profile.AvatarUrl}` 
-                            : `https://ui-avatars.com/api/?name=${data.profile.FullName}&background=random&color=fff&size=64`;
+                            : `${baseUrl}${defaultImage}`;
                         setMiniAvatar(avatarSrc);
                     }
                 }

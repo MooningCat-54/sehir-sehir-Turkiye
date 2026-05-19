@@ -1,11 +1,11 @@
 import React from 'react';
-import { Outlet, Link, useLocation, Navigate, useNavigate } from 'react-router-dom'; // Link ve useLocation ekledik
+import { Outlet, Link, useLocation, Navigate, useNavigate } from 'react-router-dom';
 import './css/Auth.css';
 
 const Auth = () => {
     const location = useLocation();
-    const currentPath = location.pathname.toLowerCase(); //pathi lowercase yapıyor
-    const isLoginPage = currentPath === '/auth/login'; //burda karşılaştırma yapıyor path doğru ise true yanlış ise false döndürüyor
+    const currentPath = location.pathname.toLowerCase(); 
+    const isLoginPage = currentPath === '/auth/login'; 
     const navigate = useNavigate();
 
     return (

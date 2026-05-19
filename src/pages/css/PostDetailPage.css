@@ -1,0 +1,215 @@
+
+.post-detail-container {
+    max-width: 1100px;
+    margin: 20px auto;
+    padding: 0 15px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+
+.post-detail-container .usersharingcard-card-container {
+    cursor: default !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+    width: 100% !important;
+    display: block !important;
+    padding: 5px;
+}
+
+.post-detail-container .usersharingcard-text-content-container {
+    font-size: 1.15rem !important;
+    line-height: 1.5 !important;
+    color: #0f1419 !important;
+    margin-top: 10px !important;
+}
+
+.post-detail-container .usersharingcard-engagement-buttons-container {
+    border-top: 1px solid #eff3f4 !important;
+    border-bottom: 1px solid #eff3f4 !important;
+    padding: 12px 0 !important;
+    margin-top: 15px !important;
+}
+
+.post-detail-container .usersharingcard-image-wrapper {
+    width: 100% !important;
+    max-height: 450px !important;
+    overflow: hidden !important;
+    border-radius: 16px !important;
+    margin-bottom: 12px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background-color: #f7f9f9 !important;
+}
+
+.post-detail-container .usersharingcard-main-image {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    display: block !important;
+}
+
+.post-detail-container img.usersharingcard-avatar {
+    width: 48px !important;
+    height: 48px !important;
+    min-width: 48px !important;
+    min-height: 48px !important;
+    border-radius: 50% !important;
+    object-fit: cover !important;
+    flex-shrink: 0 !important;
+    display: inline-block !important;
+}
+
+.comment-form-container {
+    background-color: #ffffff;
+    border-radius: 16px;
+    padding: 16px;
+    margin-top: 16px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    border: 1px solid #eff3f4;
+}
+
+.comment-form {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.comment-form-avatar {
+    width: 40px !important;
+    height: 40px !important;
+    min-width: 40px !important;
+    min-height: 40px !important;
+    border-radius: 50% !important;
+    object-fit: cover !important;
+    flex-shrink: 0 !important;
+}
+
+.comment-input {
+    flex: 1;
+    padding: 12px 16px;
+    border-radius: 24px;
+    border: 1px solid #cfd9de;
+    outline: none;
+    font-size: 0.95rem;
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
+.comment-input:focus {
+    background-color: #fff;
+    border-color: #1d9bf0;
+}
+
+.comment-submit-btn {
+    background-color: #1d9bf0;
+    color: #ffffff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 24px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.comment-submit-btn:hover {
+    background-color: #1a8cd8;
+}
+
+.comment-item-card {
+    display: flex;
+    gap: 12px;
+    background-color: #ffffff;
+    padding: 16px;
+    border-radius: 16px;
+    margin-bottom: 10px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+    border: 1px solid #eff3f4;
+}
+
+.comment-item-avatar {
+    width: 38px !important;
+    height: 38px !important;
+    min-width: 38px !important;
+    min-height: 38px !important;
+    border-radius: 50% !important;
+    object-fit: cover !important;
+    flex-shrink: 0 !important;
+}
+
+.comment-item-content {
+    flex: 1;
+}
+
+.comment-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+}
+
+.comment-item-username {
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: #0f1419;
+}
+
+.comment-item-date {
+    font-size: 0.8rem;
+    color: #536471;
+}
+
+.comment-item-text {
+    font-size: 0.95rem;
+    color: #0f1419;
+    margin: 0;
+    line-height: 1.45;
+    word-break: break-word;
+}
+
+.replies-title {
+    font-size: 1.1rem;
+    color: #536471;
+    margin: 20px 0 10px 0;
+    padding-left: 4px;
+    font-weight: 700;
+}
+
+.no-comments-box {
+    text-align: center;
+    color: #536471;
+    padding: 30px 20px;
+    background-color: #ffffff;
+    border-radius: 16px;
+    border: 1px solid #eff3f4;
+}
+
+.post-detail-container .usersharingcard-profile-group {
+    display: flex !important;
+    align-items: center !important;
+    gap: 14px !important;
+}
+
+.post-detail-container .usersharingcard-name-container {
+    font-weight: 700 !important;
+    font-size: 1.05rem !important;
+    color: #0f1419 !important;
+    margin-bottom: 2px !important;
+    display: inline-block !important;
+}
+
+.post-detail-container .usersharingcard-date-container {
+    display: flex !important;
+    align-items: center !important;
+    font-size: 0.9rem !important;
+    color: #536471 !important;
+    margin-left: 2px !important;
+    padding-top: 7px;
+}
+
+.post-detail-container .usersharingcard-user-info-bar {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    padding: 4px 0 !important;
+    margin-bottom: 12px !important;
+}

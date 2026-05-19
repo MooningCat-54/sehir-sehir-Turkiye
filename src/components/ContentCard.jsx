@@ -1,23 +1,31 @@
-import React from "react";
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import DropdownMenu from "./DropDownMenu";
 import { useAuth } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 import './css/ContentCard.css';
 import AdminPlaceModal from './AdminPlaceModal';
 
-const ContentCard = ({ data }) => {
+const ContentCard = ({ data, onUnsave }) => {
     const baseUrl = "http://localhost:5000";
     const { user } = useAuth();
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const navigate = useNavigate();
+    const { Id, IsSaved } = data;
+
+    // Kaydedilme durumunu tutan dinamik state
+    const [savedStatus, setSavedStatus] = useState(Number(IsSaved) === 1);
+
+    // Veriler yenilenirse veya sayfa değişirse state'i güncel tutmak için senkronizasyon
+    useEffect(() => {
+        setSavedStatus(Number(IsSaved) === 1);
+    }, [IsSaved]);
 
     const imageSource = data.MainImage 
         ? `${baseUrl}${data.MainImage}` 
         : `${baseUrl}/uploads/official/default.jpg`;
 
     const handleDelete = async () => {
-        // Backend 'Id' (Büyük I) beklediği için garantiye alıyoruz
-        const placeId = data.Id;
-
+        const placeId = Id;
         if (!placeId) {
             alert("Hata: Silinecek öğenin ID'si bulunamadı!");
             return;
@@ -28,7 +36,6 @@ const ContentCard = ({ data }) => {
         if (confirmDelete) {
             try {
                 const token = localStorage.getItem('token');
-
                 const response = await fetch(`${baseUrl}/api/posts/official/${placeId}`, {
                     method: 'DELETE',
                     headers: {
@@ -37,63 +44,84 @@ const ContentCard = ({ data }) => {
                 });
 
                 if (!response.ok) {
-                    const errorText = await response.text();
-                    console.error("Backend'den gelen hata metni:", errorText);
-                    alert("Hata: " + errorText);
-                    return;
+                    alert("Silme işlemi başarısız oldu.");
                 }
-
-                const result = await response.json();
-
-                if (result.success) {
-                    alert("Rota başarıyla silindi.");
-                    window.location.reload(); 
-                } else {
-                    alert("Silme işlemi başarısız: " + result.message);
-                }
-            } catch (err) {
-                console.error("Silme hatası:", err);
-                alert("Sunucuyla bağlantı kurulamadı.");
+            } catch (error) {
+                console.error("Silme hatası:", error);
             }
         }
     };
 
-    const handleSave = () => console.log("Kaydedildi");
-    
-    const handleShare = () => {
-        const shareUrl = `${window.location.origin}/home`;
-
-        navigator.clipboard.writeText(shareUrl)
-            .then(() => {
-                alert("Bağlantı kopyalandı! İstediğiniz yerde paylaşabilirsiniz.");
-            })
-            .catch(err => {
-                console.error("Kopyalama hatası:", err);
-                alert("Bağlantı kopyalanamadı.");
-            });
-    };
-
-    const handleEdit = () => {
+    const handleOpenModel = () => {
         setIsModalOpen(true);
     };
+
     const handleCloseModel = () => {
         setIsModalOpen(false);
     };
 
+    // Kaydet/Sil (Toggle) fonksiyonu
+    const handleSaveToggle = async () => {
+        if (!user) {
+            alert("Rotaları kaydetmek için lütfen giriş yapın!");
+            return;
+        }
+
+        try {
+            const token = localStorage.getItem('token');
+            const res = await fetch(`${baseUrl}/api/posts/save-toggle`, {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ targetId: Id, itemType: 'OFFICIAL' })
+            });
+            const result = await res.json();
+
+            if (result.success) {
+                setSavedStatus(result.isSaved);
+                if (!result.isSaved && onUnsave) {
+                    onUnsave(Id);
+                }
+            }
+        } catch (err) { 
+            console.error("Resmi rota kaydetme hatası:", err); 
+        }
+    };
+
+    const handleShare = () => {
+        const shareUrl = `${window.location.origin}/official/${Id}`;
+        navigator.clipboard.writeText(shareUrl)
+            .then(() => alert("Bağlantı kopyalandı!"))
+            .catch(err => console.error("Kopyalama hatası:", err));
+    };
+    
     const contentOptions = [
-        { label: 'Kaydet', icon: '🔖', action: handleSave },
-        { label: 'Paylaş', icon: '🔗', action: handleShare },
-        ...(user?.isAdmin ? [
-            { label: 'Düzenle', icon: '✏️', action: handleEdit },
-            // DÜZELTME: action: () => handleDelete() yerine direkt fonksiyonun kendisini (handleDelete) geçiyoruz
-            { label: 'Sil', icon: '🗑️', action: handleDelete } 
+        {
+            label: savedStatus ? "Kaydedildi" : "Kaydet",
+            icon: savedStatus ? "🔖" : "💾",
+            action: handleSaveToggle
+        },
+        { label: 'Paylaş', icon: '🔗', action: () => handleShare() },
+        ...(user && user.isAdmin ? [
+            { label: "Düzenle", icon: "✏️", action: handleOpenModel },
+            { label: "Sil", icon: "🗑️", action: handleDelete }
         ] : [])
     ];
         
     return (
-        <div className="card-box">
-            {/* Sadece giriş yapılmışsa menü gözüksün */}
-            {user && <DropdownMenu options={contentOptions} />}
+        <div 
+            className="card-box"
+            onClick={() => navigate(`/official/${Id}`)}
+            style={{ cursor: 'pointer' }}
+        >
+    
+            {user && (
+                <div onClick={(e) => e.stopPropagation()}>
+                    <DropdownMenu options={contentOptions} />
+                </div>
+            )}
             
             <img 
                 className="card-image"
@@ -110,6 +138,7 @@ const ContentCard = ({ data }) => {
                     <span className="card-date">📍 {data.City} / {data.LocationDetail}</span>
                 </div>
                 
+                {/* GERİ GETİRİLEN KATEGORİ ALANI */}
                 {data.Category && (
                     <div className="card-categories" style={{fontSize: '0.8rem', color: '#1877f2', marginTop: '5px'}}>
                         {data.Category}
@@ -120,10 +149,9 @@ const ContentCard = ({ data }) => {
             {isModalOpen && (
                 <AdminPlaceModal 
                     onClose={handleCloseModel} 
-                    initialData={data} // Kartın tüm verisini (Title, Description, Id vb.) gönderiyoruz
+                    initialData={data} 
                 />
             )}
-
         </div>
     );
 };

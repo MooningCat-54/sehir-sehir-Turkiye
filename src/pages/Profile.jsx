@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import GalleryArea from '../components/GalleryArea';
-import UserSharingCard from '../components/UserSharingCard'; // Yeni ekledik
+import UserSharingCard from '../components/UserSharingCard';
 import { useAuth } from '../context/AuthContext';
 import './css/Profile.css';
 
@@ -11,12 +11,12 @@ const Profile = () => {
     const navigate = useNavigate();
     const baseUrl = "http://localhost:5000";
     const defaultAvatar = `${baseUrl}/uploads/avatars/default_avatar.png`;
-
     const [profileData, setProfileData] = useState(null);
     const [userPosts, setUserPosts] = useState([]); 
     const [loading, setLoading] = useState(true);
-    // 1. Sekme yönetimi için state
     const [activeTab, setActiveTab] = useState('posts'); 
+
+    console.log(userPosts);
 
     useEffect(() => {
         const fetchProfileAndPosts = async () => {
@@ -30,12 +30,15 @@ const Profile = () => {
                 const postsJson = await postsRes.json();
 
                 if (postsJson.success) {
-                    // 2. Verileri ham haliyle saklıyoruz ki UserSharingCard içinde kullanabilelim
                     setUserPosts(postsJson.posts);
                 }
-            } catch (error) {
+            }
+
+            catch (error) {
                 console.error("Profil verileri çekilemedi:", error);
-            } finally {
+            }
+            
+            finally {
                 setLoading(false);
             }
         };
@@ -50,7 +53,6 @@ const Profile = () => {
         ? `${baseUrl}${profileData.AvatarUrl}` 
         : `${defaultAvatar}`;
 
-    // 3. Galeri sekmesi için sadece resimli olanları filtreleyip GalleryArea formatına sokuyoruz
     const galleryImages = userPosts
         .filter(post => post.ImageUrl)
         .map(post => ({
@@ -89,7 +91,6 @@ const Profile = () => {
                 </div>
             </header>
 
-            {/* 4. Sekme Butonları */}
             <div className="profile-tabs-container">
                 <button 
                     className={`profile-tab-btn ${activeTab === 'posts' ? 'active' : ''}`}
@@ -107,18 +108,16 @@ const Profile = () => {
 
             <div className="profile-content-display">
                 {activeTab === 'posts' ? (
-                    // SEKME 1: Tüm Postlar (Resimli veya Resimsiz)
                     <div className="profile-posts-stream">
                         {userPosts.length > 0 ? (
                             userPosts.map(post => (
-                                <UserSharingCard key={post.Id} sharingCard={post} />
+                                <UserSharingCard key={post.Id} data={post} />
                             ))
                         ) : (
                             <div className="empty-state">Henüz bir paylaşım yok.</div>
                         )}
                     </div>
                 ) : (
-                    // SEKME 2: Sadece Galeri (Sadece resimli olanlar)
                     <div className="profile-gallery-wrapper">
                         {galleryImages.length > 0 ? (
                             <GalleryArea images={galleryImages} />

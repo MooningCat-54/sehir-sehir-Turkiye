@@ -83,7 +83,6 @@
     margin-bottom: 5px;
 }
 
-/* ALT KISIM: Fotoğraf Grid'i */
 .profile-divider {
     border-top: 1px solid #dbdbdb;
     margin-bottom: 20px;
@@ -91,14 +90,12 @@
 
 .profile-gallery {
     display: grid;
-    /* Instagram gibi yan yana tam 3 kare fotoğraf dizmek için: */
     grid-template-columns: repeat(3, 1fr); 
-    gap: 28px; /* Fotoğraflar arası boşluk */
+    gap: 28px;
 }
 
 .gallery-item {
     width: 100%;
-    /* aspect-ratio: 1 / 1 kodu resmin kusursuz bir kare olmasını sağlar! */
     aspect-ratio: 1 / 1; 
     object-fit: cover;
     cursor: pointer;
@@ -127,7 +124,7 @@
     font-size: 0.8rem;
     letter-spacing: 1px;
     border-top: 1px solid transparent;
-    margin-top: -1px; /* Divider ile birleşmesi için */
+    margin-top: -1px;
 }
 
 .profile-tab-btn.active {
@@ -137,10 +134,10 @@
 
 .profile-posts-stream {
     max-width: 1000px;
-    width: 900px;
+    width: 1000px;
     display: flex;
     flex-direction: column;
-    align-items: center; /* Kartları bu geniş kutunun içinde ortala */
+    align-items: center;
 }
 
 .empty-state {

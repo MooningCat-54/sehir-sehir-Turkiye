@@ -1,14 +1,35 @@
-import React, { useState } from 'react';
-import { useAuth } from '../context/AuthContext'; //[cite: 16]
+import React, { useState, useEffect } from 'react';
+import { useAuth } from '../context/AuthContext'; 
 import './css/CreatePostModal.css';
 
-const CreatePostModal = ({ isOpen, onClose }) => {
-    const { user } = useAuth(); // Kimin paylaştığını anlamak için[cite: 16]
+// initialData prop'unu ekledik. Varsayılan olarak null (yani ekleme modu)
+const CreatePostModal = ({ isOpen, onClose, initialData = null }) => {
+    const { user } = useAuth(); 
+    const isEditMode = !!initialData; // initialData varsa true olur, düzenleme moduna geçer
+
+    // Form state'lerini initialData'ya bağlıyoruz (büyük/küçük harf varyasyonlarını garantiye alarak)
     const [location, setLocation] = useState('');
     const [description, setDescription] = useState('');
-    const [category, setCategory] = useState('Doğa'); //[cite: 13]
+    const [category, setCategory] = useState('Doğa'); 
     const [selectedFile, setSelectedFile] = useState(null);
     const [loading, setLoading] = useState(false);
+
+    // Modal her açıldığında veya initialData değiştiğinde formun içini doldur/sıfırla
+    useEffect(() => {
+        if (isOpen) {
+            if (isEditMode) {
+                setLocation(initialData.City || initialData.city || '');
+                setDescription(initialData.Caption || initialData.caption || '');
+                setCategory(initialData.Category || initialData.category || 'Doğa');
+            } else {
+                // Ekleme modundaysa alanları sıfırla
+                setLocation('');
+                setDescription('');
+                setCategory('Doğa');
+                setSelectedFile(null);
+            }
+        }
+    }, [isOpen, initialData, isEditMode]);
 
     if (!isOpen) return null;
 
@@ -16,31 +37,40 @@ const CreatePostModal = ({ isOpen, onClose }) => {
         e.preventDefault();
         setLoading(true);
 
-        // 1. Resim gönderdiğimiz için FormData paketini hazırlıyoruz[cite: 12]
         const formData = new FormData();
-        formData.append('username', user.username); // SQL tarafında UserId'yi bulmak için[cite: 2]
-        formData.append('caption', description);
+        formData.append('username', user.username); 
+        formData.append('caption', description); // SQL'deki Caption kolonuna gidecek
         formData.append('city', location);
         formData.append('category', category);
-        formData.append('type', 'post'); // Multer klasör seçimi için
+        formData.append('type', 'post'); 
+        
         if (selectedFile) {
-            formData.append('image', selectedFile); //[cite: 3]
+            formData.append('image', selectedFile); 
         }
 
+        // DİNAMİK ROTA MANTIĞI: Düzenleme ise PUT ve ID ekle, değilse POST
+        const url = isEditMode 
+            ? `http://localhost:5000/api/posts/user/update/${initialData.Id || initialData.id}`
+            : 'http://localhost:5000/api/posts/add';
+        
+        const method = isEditMode ? 'PUT' : 'POST';
+
         try {
-            // 2. Backend'e POST isteği atıyoruz[cite: 12]
-            const response = await fetch('http://localhost:5000/api/posts/add', {
-                method: 'POST',
-                body: formData // Header ekleme, tarayıcı halleder[cite: 12]
+            const response = await fetch(url, {
+                method: method,
+                body: formData 
             });
 
             if (response.ok) {
-                alert("Deneyiminiz paylaşıldı! 🚀");
+                alert(isEditMode ? "Deneyiminiz başarıyla güncellendi! 📝" : "Deneyiminiz paylaşıldı! 🚀");
                 onClose();
-                window.location.reload(); // Listeyi güncellemek için en basit yol[cite: 13]
+                window.location.reload(); 
+            } else {
+                const errText = await response.text();
+                alert("Hata oluştu: " + errText);
             }
         } catch (error) {
-            console.error("Yükleme hatası:", error);
+            console.error("İşlem hatası:", error);
             alert("Sunucuya ulaşılamıyor.");
         } finally {
             setLoading(false);
@@ -51,7 +81,8 @@ const CreatePostModal = ({ isOpen, onClose }) => {
         <div className="modal-overlay" onClick={onClose}>
             <div className="modal-content" onClick={(e) => e.stopPropagation()}>
                 <div className="modal-header">
-                    <h2>Yeni Deneyim Paylaş</h2>
+                    {/* Başlık moda göre değişiyor */}
+                    <h2>{isEditMode ? "Deneyimi Düzenle" : "Yeni Deneyim Paylaş"}</h2>
                     <button className="close-button" onClick={onClose}>&times;</button>
                 </div>
 
@@ -77,7 +108,6 @@ const CreatePostModal = ({ isOpen, onClose }) => {
                             <option value="Şehir">Şehir</option>
                             <option value="Gastronomi">Gastronomi</option>
                             <option value="Kış Turizmi">Kış Turizmi</option>
-                            <option value="Gastronomi">Gastronomi</option>
                         </select>
                     </div>
 
@@ -93,19 +123,20 @@ const CreatePostModal = ({ isOpen, onClose }) => {
                     </div>
 
                     <div className="form-group">
-                        <label>Fotoğraf Ekle</label>
+                        <label>Fotoğraf {isEditMode ? "Değiştir (Aynı kalacaksa boş bırakın)" : "Ekle"}</label>
                         <input 
                             type="file" 
                             accept="image/*" 
                             className="file-input" 
-                            onChange={(e) => setSelectedFile(e.target.files[0])} // Dosyayı yakalıyoruz[cite: 12]
+                            onChange={(e) => setSelectedFile(e.target.files[0])}
+                            required={!isEditMode} // Düzenleme modunda resim zorunlu değil
                         />
                     </div>
 
                     <div className="modal-footer">
                         <button type="button" className="cancel-btn" onClick={onClose}>İptal</button>
                         <button type="submit" className="share-btn" disabled={loading}>
-                            {loading ? 'Paylaşılıyor...' : 'Paylaş'}
+                            {loading ? 'Kaydediliyor...' : (isEditMode ? 'Değişiklikleri Kaydet' : 'Paylaş')}
                         </button>
                     </div>
                 </form>

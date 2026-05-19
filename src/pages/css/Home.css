@@ -44,10 +44,9 @@
 .home-sharing-content-layout {
     display: flex;
     gap: 20px;
-    align-items: flex-start; /* Sağ panelin ekrana yapışabilmesi için bu şart */
+    align-items: flex-start;
 }
 
-/* SOL SÜTUN (%65): Postların Aktığı Yer */
 .feed-column {
     flex: 80%;
     display: flex;
@@ -55,14 +54,12 @@
     gap: 20px;
 }
 
-/* SAĞ SÜTUN (%35): Sabit (Sticky) Paylaşım Paneli */
 .sidebar-column {
     flex: 35%;
-    position: sticky; /* Sihirli kelime: Ekranda asılı kalır! */
-    top: 100px; /* Sayfa kaydıkça tepeden 20px boşluk bırakır */
+    position: sticky;
+    top: 100px;
 }
 
-/* Sağ panelin içindeki kutunun makyajı */
 .create-post-panel {
     background-color: #fff;
     padding: 25px;

@@ -12,11 +12,11 @@ import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import PublicRoute from './components/PublicRoute';
 import SavedPlacesPage from './pages/SavedPlacesPage';
+import PostDetailPage from './pages/PostDetailPage';
+import OfficialPlaceDetailPage from './pages/OfficialPlaceDetailPage';
 
 function App() {
   return (
-    // 2. TÜM UYGULAMAYI (AuthProvider) KAPSAMA ALANINA ALIYORUZ
-    // Bu sayede navbar profile ve diğer tüm sayfalar giriş yapılıp yapılmadığını bilecek.
     <AuthProvider>
         <div style={{ backgroundColor: '#f0f2f5', minHeight: '100vh' }}>
           <NavBar />
@@ -24,6 +24,8 @@ function App() {
           <Routes>
             <Route index element={<Navigate to="/home" replace />} />
             <Route path="/home" element={<Home />} />
+            <Route path="/posts/:id" element={<PostDetailPage />} />
+            <Route path="/official/:id" element={<OfficialPlaceDetailPage />} />
 
             <Route path="/auth" element={
               <PublicRoute>

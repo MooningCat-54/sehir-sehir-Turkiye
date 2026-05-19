@@ -9,7 +9,7 @@ const ServerError = () => {
             flexDirection: 'column', 
             justifyContent: 'center', 
             alignItems: 'center', 
-            backgroundColor: '#f8d7da', // Hafif kırmızımsı hata rengi
+            backgroundColor: '#f8d7da',
             color: '#721c24',
             fontFamily: 'sans-serif',
             textAlign: 'center',
